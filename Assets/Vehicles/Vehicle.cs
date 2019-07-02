@@ -8,7 +8,7 @@ public abstract class Vehicle : MonoBehaviour
 
     protected BoxCollider col;
 
-    private void Move(Vector3 move) {
-
+    protected void Move(Vector3 move) {
+        
     }
 }
