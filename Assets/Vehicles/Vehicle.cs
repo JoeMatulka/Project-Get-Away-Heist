@@ -2,17 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Vehicle : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(BoxCollider))]
+public abstract class Vehicle : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Rigidbody rigidbody;
+
+    private BoxCollider col;
+
+    private Vector3 input;
+
     void Start()
     {
-        
+        rigidbody = GetComponent<Rigidbody>();
+        col = GetComponent<BoxCollider>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        Move(input);
+    }
+
+    private void Move(Vector3 move) {
+
     }
 }
