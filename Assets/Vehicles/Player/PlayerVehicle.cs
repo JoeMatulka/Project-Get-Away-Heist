@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(BoxCollider))]
 public class PlayerVehicle: Vehicle
 {
     void Start()
@@ -12,6 +14,6 @@ public class PlayerVehicle: Vehicle
 
     void Update()
     {
-        Move(input);
+
     }
 }
