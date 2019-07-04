@@ -2,59 +2,31 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class AxleInfo
+public abstract class Vehicle : MonoBehaviour
 {
-    public WheelCollider leftWheel;
-    public WheelCollider rightWheel;
-    public bool motor;
-    public bool steering;
-}
+    protected Rigidbody rb;
 
-public class Vehicle : MonoBehaviour
-{
-    public List<AxleInfo> axleInfos;
-    public float maxMotorTorque;
-    public float maxSteeringAngle;
+    protected BoxCollider col;
 
-    // finds the corresponding visual wheel
-    // correctly applies the transform
-    public void ApplyLocalPositionToVisuals(WheelCollider collider)
-    {
-        if (collider.transform.childCount == 0)
-        {
-            return;
-        }
+    protected const float SPEED = 10000;
 
-        Transform visualWheel = collider.transform.GetChild(0);
+    protected const float TURN_AXIS = 10000;
 
-        Vector3 position;
-        Quaternion rotation;
-        collider.GetWorldPose(out position, out rotation);
-
-        visualWheel.transform.position = position;
-        visualWheel.transform.rotation = rotation;
+    protected void Accelerate(float accel) {
+        rb.AddRelativeForce(accel * Vector3.forward);
     }
 
-    public void FixedUpdate()
-    {
-        float motor = maxMotorTorque * Input.GetAxis("Vertical");
-        float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+    protected void Brake() {
 
-        foreach (AxleInfo axleInfo in axleInfos)
-        {
-            if (axleInfo.steering)
-            {
-                axleInfo.leftWheel.steerAngle = steering;
-                axleInfo.rightWheel.steerAngle = steering;
-            }
-            if (axleInfo.motor)
-            {
-                axleInfo.leftWheel.motorTorque = motor;
-                axleInfo.rightWheel.motorTorque = motor;
-            }
-            ApplyLocalPositionToVisuals(axleInfo.leftWheel);
-            ApplyLocalPositionToVisuals(axleInfo.rightWheel);
+    }
+
+    protected void ApplyTorque(float turn) {
+        rb.AddTorque(turn * Vector3.up);
+    }
+
+    protected void ApplyDefaultVehicleRigidbodyOptions() {
+        if (rb != null) {
+            rb.mass = 750;
         }
     }
 }
