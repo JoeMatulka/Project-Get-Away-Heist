@@ -2,24 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BoxCollider))]
 public class Player : Vehicle
 {
-    // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        Rigidbody = GetComponent<Rigidbody>();
 
-        col = GetComponent<BoxCollider>();
+        Collider = GetComponentInChildren<BoxCollider>();
 
-        ApplyDefaultVehicleRigidbodyOptions();
+        Weight = 750;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        Accelerate(SPEED * Input.GetAxis("Vertical"));
-        ApplyTorque(TURN_AXIS * Input.GetAxis("Horizontal"));
+        CheckGroundStatus();
+
+        Accelerate(Input.GetAxis("Vertical"));
+        Turn(Input.GetAxis("Horizontal"));
     }
 }
