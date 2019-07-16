@@ -17,7 +17,8 @@ public abstract class Vehicle : MonoBehaviour
 
     protected void Accelerate(float accel)
     {
-        if (wheelsOnGround) {
+        if (wheelsOnGround)
+        {
             m_rigidbody.AddForce((accel * SPEED) * transform.forward);
             Vector3.ClampMagnitude(m_rigidbody.velocity, MAX_VELOCITY);
         }
@@ -30,12 +31,20 @@ public abstract class Vehicle : MonoBehaviour
 
     protected void Turn(float turn)
     {
-        if (wheelsOnGround) {
+        if (wheelsOnGround)
+        {
             m_rigidbody.AddTorque((turn * TURN_AXIS) * transform.up);
         }
     }
 
-    protected void CheckGroundStatus() {
+    protected void CheckGroundStatus()
+    {
+        Vector3 contact = CheckFrontBackSensors();
+        CheckBottomSensor(contact);
+    }
+
+    private void CheckBottomSensor(Vector3 frontBackContact)
+    {
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
 
@@ -48,6 +57,11 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
+            Vector3 normal = hit.normal;
+            if (frontBackContact != Vector3.zero) {
+                normal = frontBackContact;
+            }
+            transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
             wheelsOnGround = true;
         }
         else
@@ -57,16 +71,58 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    protected float Weight {
-        set {
-            if (m_rigidbody != null) {
+    private Vector3 CheckFrontBackSensors()
+    {
+        Vector3 contact = Vector3.zero;
+
+        // Bit shift the index of the layer (8) to get a bit mask
+        int layerMask = 1 << 8;
+
+        // This would cast rays only against colliders in layer 8.
+        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+        layerMask = ~layerMask;
+
+        RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+
+        // Need to grab position at bottom of collider
+        Vector3 position = new Vector3(
+            transform.position.x,
+            transform.position.y / 7.5f,
+            transform.position.z
+        );
+
+        // Front Sensor
+        if (Physics.Raycast(position, transform.TransformDirection(Vector3.forward), out hit, Collider.size.z + .5f, layerMask))
+        {
+            Debug.DrawRay(position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            contact = hit.normal;
+        }
+        else
+        {
+            Debug.DrawRay(position, transform.TransformDirection(Vector3.forward) * (Collider.size.z + .5f), Color.white);
+        }
+
+        // Back Sensor
+
+        return contact;
+    }
+
+    protected float Weight
+    {
+        set
+        {
+            if (m_rigidbody != null)
+            {
                 m_rigidbody.mass = value;
             }
         }
     }
 
-    protected Rigidbody Rigidbody {
-        set {
+    protected Rigidbody Rigidbody
+    {
+        set
+        {
             m_rigidbody = value;
         }
     }
