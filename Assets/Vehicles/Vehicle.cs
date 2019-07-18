@@ -8,8 +8,6 @@ public abstract class Vehicle : MonoBehaviour
 
     protected BoxCollider Collider;
 
-    protected float hoverHeight = .1f;
-
     protected const float SPEED = 11000;
     private const float MAX_VELOCITY = 100;
 
@@ -65,7 +63,7 @@ public abstract class Vehicle : MonoBehaviour
                 normal = frontBackContact;
             }
             transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
-            wheelsOnGround = true;
+           wheelsOnGround = true;
         }
         else
         {
