@@ -43,9 +43,13 @@ public abstract class Vehicle : MonoBehaviour
     {
         CheckFrontBackSensors();
         CheckBottomSensor();
+        if (!wheelsOnGround)
+        {
+            AllignToGround();
+        }
     }
 
-    private void CheckBottomSensor()
+    private void AllignToGround()
     {
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
@@ -59,11 +63,36 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            wheelsOnGround = true;
+            transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
         }
         else
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * 1000, Color.white);
+        }
+    }
+
+    private void CheckBottomSensor()
+    {
+        // Grounded length check
+        float groundCheck = .75f;
+
+        // Bit shift the index of the layer (8) to get a bit mask
+        int layerMask = 1 << 8;
+
+        // This would cast rays only against colliders in layer 8.
+        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+        layerMask = ~layerMask;
+
+        RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, groundCheck, layerMask))
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
+            wheelsOnGround = true;
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * groundCheck, Color.white);
             wheelsOnGround = false;
         }
     }
@@ -91,11 +120,12 @@ public abstract class Vehicle : MonoBehaviour
         float length = Collider.size.z * 1.5f;
 
         // Check if vehicle is going forward or backwards
-        Vector3 rayDirection = inputAccel >= 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
+        Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
 
         if (Physics.Raycast(position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
             Debug.DrawRay(position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
+            Debug.Log(hit.normal);
             transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
         }
         else
