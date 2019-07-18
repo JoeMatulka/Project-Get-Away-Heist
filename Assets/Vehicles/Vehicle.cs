@@ -10,16 +10,18 @@ public abstract class Vehicle : MonoBehaviour
 
     protected const float SPEED = 11000;
     private const float MAX_VELOCITY = 100;
+    private float inputAccel = 0;
 
-    protected const float TURN_AXIS = 10000;
+    protected const float TURN_AXIS = 9500;
 
     private bool wheelsOnGround = false;
 
     protected void Accelerate(float accel)
     {
+        inputAccel = accel;
         if (wheelsOnGround)
         {
-            m_rigidbody.AddForce((accel * SPEED) * transform.forward);
+            m_rigidbody.AddForce((inputAccel * SPEED) * transform.forward);
             Vector3.ClampMagnitude(m_rigidbody.velocity, MAX_VELOCITY);
         }
     }
@@ -39,11 +41,11 @@ public abstract class Vehicle : MonoBehaviour
 
     protected void CheckGroundStatus()
     {
-        Vector3 contact = CheckFrontBackSensors();
-        CheckBottomSensor(contact);
+        CheckFrontBackSensors();
+        CheckBottomSensor();
     }
 
-    private void CheckBottomSensor(Vector3 frontBackContact)
+    private void CheckBottomSensor()
     {
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
@@ -57,13 +59,7 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            Vector3 normal = hit.normal;
-            if (frontBackContact != Vector3.zero)
-            {
-                normal = frontBackContact;
-            }
-            transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
-           wheelsOnGround = true;
+            wheelsOnGround = true;
         }
         else
         {
@@ -72,10 +68,8 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    private Vector3 CheckFrontBackSensors()
+    private void CheckFrontBackSensors()
     {
-        Vector3 contact = Vector3.zero;
-
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
 
@@ -97,19 +91,17 @@ public abstract class Vehicle : MonoBehaviour
         float length = Collider.size.z * 1.5f;
 
         // Check if vehicle is going forward or backwards
-        float direction = Vector3.Dot(transform.forward, m_rigidbody.velocity);
-        Vector3 rayDirection = direction >= 0 ? Quaternion.Euler(20, 0, 0) * Vector3.forward : Quaternion.Euler(-20, 0, 0) * -Vector3.forward;
+        Vector3 rayDirection = inputAccel >= 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
 
         if (Physics.Raycast(position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
             Debug.DrawRay(position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
-            contact = hit.normal;
+            transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
         }
         else
         {
             Debug.DrawRay(position, transform.TransformDirection(rayDirection) * (length), Color.white);
         }
-        return contact;
     }
 
     protected float Weight
