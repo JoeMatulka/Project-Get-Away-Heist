@@ -125,7 +125,6 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
             Debug.DrawRay(position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
-            Debug.Log(hit.normal);
             transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
         }
         else
