@@ -8,6 +8,8 @@ public abstract class Vehicle : MonoBehaviour
 
     protected BoxCollider Collider;
 
+    protected float hoverHeight = .1f;
+
     protected const float SPEED = 11000;
     private const float MAX_VELOCITY = 100;
 
@@ -58,7 +60,8 @@ public abstract class Vehicle : MonoBehaviour
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
             Vector3 normal = hit.normal;
-            if (frontBackContact != Vector3.zero) {
+            if (frontBackContact != Vector3.zero)
+            {
                 normal = frontBackContact;
             }
             transform.rotation = Quaternion.FromToRotation(transform.up, normal) * transform.rotation;
@@ -88,23 +91,26 @@ public abstract class Vehicle : MonoBehaviour
         // Need to grab position at bottom of collider
         Vector3 position = new Vector3(
             transform.position.x,
-            transform.position.y / 7.5f,
+            transform.position.y,
             transform.position.z
         );
 
-        // Front Sensor
-        if (Physics.Raycast(position, transform.TransformDirection(Vector3.forward), out hit, Collider.size.z + .5f, layerMask))
+        // Calculate ray length
+        float length = Collider.size.z * 1.5f;
+
+        // Check if vehicle is going forward or backwards
+        float direction = Vector3.Dot(transform.forward, m_rigidbody.velocity);
+        Vector3 rayDirection = direction >= 0 ? Quaternion.Euler(20, 0, 0) * Vector3.forward : Quaternion.Euler(-20, 0, 0) * -Vector3.forward;
+
+        if (Physics.Raycast(position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
-            Debug.DrawRay(position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.DrawRay(position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
             contact = hit.normal;
         }
         else
         {
-            Debug.DrawRay(position, transform.TransformDirection(Vector3.forward) * (Collider.size.z + .5f), Color.white);
+            Debug.DrawRay(position, transform.TransformDirection(rayDirection) * (length), Color.white);
         }
-
-        // Back Sensor
-
         return contact;
     }
 
