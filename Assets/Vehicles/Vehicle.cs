@@ -10,7 +10,9 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    protected const float SPEED = 12000;
+    public static float BASE_SPEED = 11000;
+
+    protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 50;
     private float inputAccel = 0;
 
@@ -144,11 +146,14 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    protected Rigidbody Rigidbody
+    public Rigidbody Rigidbody
     {
         set
         {
             m_rigidbody = value;
+        }
+        get {
+            return m_rigidbody;
         }
     }
 }

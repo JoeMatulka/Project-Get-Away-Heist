@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 616177074}
   m_Layer: 0
   m_Name: Car
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Player Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -743,8 +743,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 616177076}
-  smoothSpeed: 0.125
-  offset: {x: 0, y: 0.95, z: -2.25}
+  smoothSpeed: 20
+  offset: {x: 0, y: -1, z: 2}
 --- !u!1 &1627363192
 GameObject:
   m_ObjectHideFlags: 0
