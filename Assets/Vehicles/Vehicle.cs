@@ -8,11 +8,14 @@ public abstract class Vehicle : MonoBehaviour
 
     protected BoxCollider Collider;
 
-    protected const float SPEED = 11000;
-    private const float MAX_VELOCITY = 100;
+    private const float MAX_SLOPE_ANGLE = 45f;
+
+    protected const float SPEED = 12000;
+    private const float MAX_VELOCITY = 50;
     private float inputAccel = 0;
 
-    protected const float TURN_AXIS = 9500;
+    protected const float TURN_AXIS = 8000;
+    private const float MAX_TURN_RADIUS = 1;
 
     private bool wheelsOnGround = false;
 
@@ -36,6 +39,7 @@ public abstract class Vehicle : MonoBehaviour
         if (wheelsOnGround)
         {
             m_rigidbody.AddTorque((turn * TURN_AXIS) * transform.up);
+            Vector3.ClampMagnitude(m_rigidbody.angularVelocity, MAX_TURN_RADIUS);
         }
     }
 
@@ -107,14 +111,6 @@ public abstract class Vehicle : MonoBehaviour
         layerMask = ~layerMask;
 
         RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-
-        // Need to grab position at bottom of collider
-        Vector3 position = new Vector3(
-            transform.position.x,
-            transform.position.y,
-            transform.position.z
-        );
 
         // Calculate ray length
         float length = Collider.size.z * 1.5f;
@@ -122,14 +118,18 @@ public abstract class Vehicle : MonoBehaviour
         // Check if vehicle is going forward or backwards
         Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
 
-        if (Physics.Raycast(position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
-            Debug.DrawRay(position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
-            transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            Debug.DrawRay(transform.position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
+            if (Vector3.Angle(hit.normal, transform.forward) - 90 <= MAX_SLOPE_ANGLE)
+            {
+                // Only allign with normals from hit if the normal is under the max slope angle
+                transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            }
         }
         else
         {
-            Debug.DrawRay(position, transform.TransformDirection(rayDirection) * (length), Color.white);
+            Debug.DrawRay(transform.position, transform.TransformDirection(rayDirection) * (length), Color.white);
         }
     }
 
