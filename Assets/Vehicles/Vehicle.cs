@@ -123,7 +123,9 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(rayDirection), out hit, length, layerMask))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
-            if (Vector3.Angle(hit.normal, transform.forward) - 90 <= MAX_SLOPE_ANGLE)
+            // Need to determine which ray was hit
+            Vector3 hitDir = inputAccel > 0 ? transform.forward : -transform.forward;
+            if (Vector3.Angle(hit.normal, hitDir) - 90 <= MAX_SLOPE_ANGLE)
             {
                 // Only allign with normals from hit if the normal is under the max slope angle
                 transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
