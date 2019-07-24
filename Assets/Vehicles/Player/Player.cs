@@ -1,11 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
 public class Player : Vehicle
 {
+    private PlayerInput input;
     void Start()
     {
+        input = GetComponent<PlayerInput>();
+
         Rigidbody = GetComponent<Rigidbody>();
 
         Collider = GetComponentInChildren<BoxCollider>();
@@ -17,7 +20,7 @@ public class Player : Vehicle
     {
         CheckGroundStatus();
 
-        Accelerate(Input.GetAxis("Vertical"));
-        Turn(Input.GetAxis("Horizontal"));
+        Accelerate(input.Acceleration);
+        Turn(input.Steering);
     }
 }
