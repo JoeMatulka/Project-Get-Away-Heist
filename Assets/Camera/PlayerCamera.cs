@@ -26,11 +26,11 @@ public class PlayerCamera : MonoBehaviour
             Vector3 playerVelocity = player.Rigidbody.velocity;
             var velocityDirection = Vector3.Dot(player.transform.forward, playerVelocity);
             
-            // Look
+            // Rotation
             var newRotation = Quaternion.LookRotation(position - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, smoothSpeed * Time.deltaTime);
 
-            // Move
+            // Follow
             float zOffset = offset.z;
             if (velocityDirection <= CAM_REVERSE_VEL) {
                 // Apply reverse camera
