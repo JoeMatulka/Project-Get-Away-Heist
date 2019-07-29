@@ -1,24 +1,10 @@
 ﻿using UnityEngine;
 
-public class PlayerInput : MonoBehaviour
+public interface PlayerInput 
 {
-    private float m_accel, m_steering;
+    float getAcceleration();
 
-    void Update()
-    {
-        m_accel = Input.GetAxis("Vertical");
-        m_steering = Input.GetAxis("Horizontal");
-    }
+    float getSteering();
 
-    public float Acceleration {
-        get {
-            return m_accel;
-        }
-    }
-
-    public float Steering {
-        get {
-            return m_steering;
-        }
-    }
+    bool isBraking();
 }

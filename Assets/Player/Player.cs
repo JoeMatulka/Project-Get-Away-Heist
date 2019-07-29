@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerControls))]
 public class Player : Vehicle
 {
-    private PlayerInput input;
+    private PlayerControls input;
     void Start()
     {
-        input = GetComponent<PlayerInput>();
+        input = GetComponent<PlayerControls>();
 
         Rigidbody = GetComponent<Rigidbody>();
 
