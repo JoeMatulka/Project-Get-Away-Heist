@@ -9,16 +9,24 @@ public class PlayerControls : MonoBehaviour
 {
     private float m_accel, m_steering;
 
-    private PlayerInput input;
+    public PlayerInput input;
 
     void Start() {
-
+        // TODO fix this later
+        input = GameObject.Find("Mobile Input Canvas").GetComponent<MobilePlayerInput>();
     }
 
     void Update()
     {
-        m_accel = input.getAcceleration();
-        m_steering = input.getSteering();
+        if (!Application.isEditor)
+        {
+            m_accel = input.getAcceleration();
+            m_steering = input.getSteering();
+        }
+        else {
+            m_accel = Input.GetAxis("Vertical");
+            m_steering = Input.GetAxis("Horizontal");
+        }
     }
 
     public float Acceleration

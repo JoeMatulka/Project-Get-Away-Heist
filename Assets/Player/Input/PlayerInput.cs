@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-
-public interface PlayerInput 
+﻿public interface PlayerInput 
 {
     float getAcceleration();
 
     float getSteering();
 
     bool isBraking();
+
+    void Pause();
 }
