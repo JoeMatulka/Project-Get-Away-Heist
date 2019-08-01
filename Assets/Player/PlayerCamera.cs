@@ -6,6 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     private Player player;
     private const float CAM_REVERSE_VEL = -.75f;
+    private const float CAM_REVERSE_INPUT = -.25f;
 
     public static float DEF_SMOOTH_SPEED = 15f;
     public static Vector3 DEF_CAM_OFFEST = new Vector3(0, -1, 2);
@@ -32,7 +33,10 @@ public class PlayerCamera : MonoBehaviour
 
             // Follow
             float zOffset = offset.z;
-            if (velocityDirection <= CAM_REVERSE_VEL) {
+            // Need to check velocity and input, because negative input could equal braking and we
+            // wouldn't want to change the camera until the player is actually moving in reverse
+            if (velocityDirection <= CAM_REVERSE_VEL && 
+                player.input.Acceleration <= CAM_REVERSE_INPUT) {
                 // Apply reverse camera
                 zOffset *= -1;
             }

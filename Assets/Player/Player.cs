@@ -4,7 +4,7 @@
 [RequireComponent(typeof(PlayerControls))]
 public class Player : Vehicle
 {
-    private PlayerControls input;
+    public PlayerControls input;
     void Start()
     {
         input = GetComponent<PlayerControls>();
