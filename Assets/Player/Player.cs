@@ -13,7 +13,7 @@ public class Player : Vehicle
 
         Collider = GetComponentInChildren<BoxCollider>();
 
-        Weight = 750;
+        Weight = 200;
     }
 
     void FixedUpdate()

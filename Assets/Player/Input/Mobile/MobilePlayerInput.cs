@@ -8,11 +8,12 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     private float accelInput, steerInput;
 
+    private const float STEER_MOD = 250;
+
     void Update()
     {
         accelInput = accelJoystick.Vertical;
-        // Multiply to apply turning radius at minimum inputs
-        steerInput = Mathf.Abs(steerJoystick.Horizontal) < .5f ? steerJoystick.Horizontal * 2f : steerJoystick.Horizontal;
+        steerInput = steerJoystick.Horizontal * STEER_MOD;
     }
 
     public float getAcceleration()
