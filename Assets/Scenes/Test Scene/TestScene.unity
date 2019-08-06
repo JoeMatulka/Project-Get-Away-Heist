@@ -893,6 +893,16 @@ PrefabInstance:
       propertyPath: Grip
       value: 70
       objectReference: {fileID: 0}
+    - target: {fileID: 3733633092671455351, guid: f4f92888a97b3ba469d31f4254e56163,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733633092671455351, guid: f4f92888a97b3ba469d31f4254e56163,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4f92888a97b3ba469d31f4254e56163, type: 3}
 --- !u!1 &963194225
