@@ -13,7 +13,7 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     void Update()
     {
         accelInput = accelJoystick.Vertical;
-        steerInput = steerJoystick.Horizontal * STEER_MOD;
+        steerInput = steerJoystick.Horizontal;
     }
 
     public float getAcceleration()

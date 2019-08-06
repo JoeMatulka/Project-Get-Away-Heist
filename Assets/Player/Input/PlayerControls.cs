@@ -26,7 +26,7 @@ public class PlayerControls : MonoBehaviour
         else {
             // TODO fix this later
             m_accel = Input.GetAxis("Vertical");
-            m_steering = Input.GetAxis("Horizontal") * 250;
+            m_steering = Input.GetAxis("Horizontal");
         }
     }
 
