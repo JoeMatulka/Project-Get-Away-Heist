@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /**
  * Handles the controls used for Player input
@@ -26,7 +24,8 @@ public class PlayerControls : MonoBehaviour
         else {
             // TODO fix this later
             m_accel = Input.GetAxis("Vertical");
-            m_steering = Input.GetAxis("Horizontal");
+            //m_steering = Input.GetAxis("Horizontal");
+            m_steering = input.getSteering();
         }
     }
 

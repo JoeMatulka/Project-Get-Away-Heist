@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    public static float BASE_SPEED = 1000;
+    public static float BASE_SPEED = 35;
 
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;
@@ -17,9 +17,8 @@ public abstract class Vehicle : MonoBehaviour
     private float inputAccel = 0;
     public float CurrentSpeed = 0;
 
-    private const float TURN_SPEED = 3.0f;
-    private const float MAX_TURN_RADIUS_INPUT = 105000;
-    private const float MIN_TURN_RADIUS_INPUT = 90000;
+    private const float MAX_TURN_RADIUS_INPUT = 2500;
+    private const float MIN_TURN_RADIUS_INPUT = 1500;
 
     private bool wheelsOnGround = false;
 
@@ -32,18 +31,16 @@ public abstract class Vehicle : MonoBehaviour
     protected void Accelerate(float accel)
     {
         inputAccel = accel;
-        if (wheelsOnGround && m_rigidbody.velocity.magnitude < MAX_VELOCITY)
+        CurrentSpeed = m_rigidbody.velocity.magnitude;
+        if (wheelsOnGround && CurrentSpeed < MAX_VELOCITY)
         {
-            m_rigidbody.AddForce((((inputAccel * SPEED) * transform.forward) * weight) * Time.deltaTime);
-            Vector3.ClampMagnitude(m_rigidbody.velocity, MAX_VELOCITY);
+            m_rigidbody.AddForce(((inputAccel * SPEED) * transform.forward) * weight);
 
             SlideSpeed = Vector3.Dot(transform.right, m_rigidbody.velocity);
 
-            currentGrip = Mathf.Lerp(MAX_GRIP, Grip, m_rigidbody.velocity.magnitude * .05f);
+            currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
             // Apply Grip
-            m_rigidbody.AddForce((transform.right * (-SlideSpeed * weight * currentGrip)) * Time.deltaTime);
-
-            CurrentSpeed = m_rigidbody.velocity.magnitude;
+            m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
         }
     }
 
@@ -54,8 +51,7 @@ public abstract class Vehicle : MonoBehaviour
 
     protected void Turn(float turn)
     {
-        if (wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN)
-        {
+        if (wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN) {
             float torque = turn;
             if (torque > 0)
             {
@@ -66,6 +62,7 @@ public abstract class Vehicle : MonoBehaviour
                 torque = Mathf.Lerp(-MIN_TURN_RADIUS_INPUT, -MAX_TURN_RADIUS_INPUT, -turn);
             }
             m_rigidbody.AddTorque((torque * transform.up) * Time.deltaTime);
+            m_rigidbody.AddTorque(torque * transform.up);
         }
     }
 
@@ -178,6 +175,8 @@ public abstract class Vehicle : MonoBehaviour
         set
         {
             m_rigidbody = value;
+            m_rigidbody.drag = 1;
+            m_rigidbody.angularDrag = .05f;
         }
         get
         {
