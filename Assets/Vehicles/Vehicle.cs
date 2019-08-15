@@ -17,7 +17,7 @@ public abstract class Vehicle : MonoBehaviour
     private float inputAccel = 0;
     public float CurrentSpeed = 0;
 
-    private const float MAX_TURN_RADIUS_INPUT = 2500;
+    private const float MAX_TURN_RADIUS_INPUT = 2000;
     private const float MIN_TURN_RADIUS_INPUT = 1500;
 
     private bool wheelsOnGround = false;
@@ -25,6 +25,9 @@ public abstract class Vehicle : MonoBehaviour
     public float Grip = 70f;
     private const float MAX_GRIP = 100f;
     private float currentGrip;
+
+    private const float DEF_DRAG = 1;
+    private const float DEF_ANGULAR_DRAG = .05f;
 
     public float SlideSpeed;
 
@@ -44,14 +47,19 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    protected void Brake()
+    protected void Brake(bool isBraking)
     {
-
+        if (wheelsOnGround)
+        {
+            m_rigidbody.drag = isBraking ? 2.5f : DEF_DRAG;
+            m_rigidbody.angularDrag = isBraking ? 0 : DEF_ANGULAR_DRAG;
+        }
     }
 
     protected void Turn(float turn)
     {
-        if (wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN) {
+        if (wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN)
+        {
             float torque = turn;
             if (torque > 0)
             {
@@ -61,7 +69,6 @@ public abstract class Vehicle : MonoBehaviour
             {
                 torque = Mathf.Lerp(-MIN_TURN_RADIUS_INPUT, -MAX_TURN_RADIUS_INPUT, -turn);
             }
-            m_rigidbody.AddTorque((torque * transform.up) * Time.deltaTime);
             m_rigidbody.AddTorque(torque * transform.up);
         }
     }
@@ -175,8 +182,8 @@ public abstract class Vehicle : MonoBehaviour
         set
         {
             m_rigidbody = value;
-            m_rigidbody.drag = 1;
-            m_rigidbody.angularDrag = .05f;
+            m_rigidbody.drag = DEF_DRAG;
+            m_rigidbody.angularDrag = DEF_ANGULAR_DRAG;
         }
         get
         {

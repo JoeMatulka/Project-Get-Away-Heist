@@ -7,6 +7,8 @@ public class PlayerControls : MonoBehaviour
 {
     private float m_accel, m_steering;
 
+    private bool m_isBraking;
+
     public PlayerInput input;
 
     void Start() {
@@ -24,8 +26,8 @@ public class PlayerControls : MonoBehaviour
         else {
             // TODO fix this later
             m_accel = Input.GetAxis("Vertical");
-            //m_steering = Input.GetAxis("Horizontal");
-            m_steering = input.getSteering();
+            m_steering = Input.GetAxis("Horizontal");
+            m_isBraking = Input.GetKey(KeyCode.Space);
         }
     }
 
@@ -42,6 +44,13 @@ public class PlayerControls : MonoBehaviour
         get
         {
             return m_steering;
+        }
+    }
+
+    public bool isBraking
+    {
+        get {
+            return m_isBraking;
         }
     }
 }
