@@ -57,7 +57,7 @@ public abstract class Vehicle : MonoBehaviour
         isBraking = braking;
         if (wheelsOnGround && isBraking)
         {
-            m_rigidbody.drag = 2f;
+            m_rigidbody.drag = 1f;
             m_rigidbody.angularDrag = 0;
         }
         else
