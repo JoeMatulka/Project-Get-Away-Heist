@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    public static float BASE_SPEED = 30;
+    public static float BASE_SPEED = 32.5f;
 
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;

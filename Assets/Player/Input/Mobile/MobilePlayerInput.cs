@@ -8,12 +8,31 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     private float accelInput, steerInput;
 
-    private const float STEER_MOD = 250;
+    private float previousSteerInput;
+
+    private const float INPUT_SMASH_THRESHOLD = .35f;
+    private const float INPUT_STEER_BRAKE_THRESHOLD = .8f;
+
+    private bool m_isBraking;
 
     void Update()
     {
         accelInput = accelJoystick.Vertical;
         steerInput = steerJoystick.Horizontal;
+
+        // Check if steering input has been smashed to enabled braking
+        if (Mathf.Abs(steerInput) >= INPUT_STEER_BRAKE_THRESHOLD && 
+            Mathf.Abs(steerInput - previousSteerInput) > INPUT_SMASH_THRESHOLD) {
+            m_isBraking = true;
+        }
+        // If braking, stop braking when input reaches below turn brake threshold
+        if (m_isBraking && Mathf.Abs(steerInput) <= INPUT_STEER_BRAKE_THRESHOLD) {
+            m_isBraking = false;
+        }
+    }
+
+    void LateUpdate() {
+        previousSteerInput = steerJoystick.Horizontal;
     }
 
     public float getAcceleration()
@@ -28,7 +47,7 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     public bool isBraking()
     {
-        throw new System.NotImplementedException();
+        return m_isBraking;
     }
 
     public void Pause()

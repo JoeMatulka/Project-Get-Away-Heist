@@ -22,6 +22,7 @@ public class PlayerControls : MonoBehaviour
         {
             m_accel = input.getAcceleration();
             m_steering = input.getSteering();
+            m_isBraking = input.isBraking();
         }
         else {
             // TODO fix this later
