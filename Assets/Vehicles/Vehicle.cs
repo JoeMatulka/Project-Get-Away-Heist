@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    public static float BASE_SPEED = 35;
+    public static float BASE_SPEED = 30;
 
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;
@@ -31,6 +31,8 @@ public abstract class Vehicle : MonoBehaviour
 
     public float SlideSpeed;
 
+    private bool isBraking = false;
+
     protected void Accelerate(float accel)
     {
         inputAccel = accel;
@@ -41,18 +43,27 @@ public abstract class Vehicle : MonoBehaviour
 
             SlideSpeed = Vector3.Dot(transform.right, m_rigidbody.velocity);
 
-            currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
-            // Apply Grip
-            m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
+            if (!isBraking)
+            {
+                currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
+                // Apply Grip
+                m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
+            }
         }
     }
 
-    protected void Brake(bool isBraking)
+    protected void Brake(bool braking)
     {
-        if (wheelsOnGround)
+        isBraking = braking;
+        if (wheelsOnGround && isBraking)
         {
-            m_rigidbody.drag = isBraking ? 2.5f : DEF_DRAG;
-            m_rigidbody.angularDrag = isBraking ? 0 : DEF_ANGULAR_DRAG;
+            m_rigidbody.drag = 2f;
+            m_rigidbody.angularDrag = 0;
+        }
+        else
+        {
+            m_rigidbody.drag = DEF_DRAG;
+            m_rigidbody.angularDrag = DEF_ANGULAR_DRAG;
         }
     }
 

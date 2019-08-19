@@ -29,7 +29,7 @@ public class PlayerCamera : MonoBehaviour
             
             // Rotation
             var newRotation = Quaternion.LookRotation(position - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, smoothSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, (smoothSpeed) * Time.deltaTime);
 
             // Follow
             float zOffset = offset.z;
