@@ -11,7 +11,7 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     private float previousSteerInput;
 
     private const float INPUT_SMASH_THRESHOLD = .35f;
-    private const float INPUT_STEER_BRAKE_THRESHOLD = .8f;
+    private const float INPUT_STEER_BRAKE_THRESHOLD = .85f;
 
     private bool m_isBraking;
 

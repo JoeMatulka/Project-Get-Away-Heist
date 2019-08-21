@@ -23,6 +23,6 @@ public class Player : Vehicle
 
         Accelerate(input.Acceleration);
         Turn(input.Steering);
-        Brake(input.isBraking);
+        //Brake(input.isBraking);
     }
 }

@@ -43,12 +43,9 @@ public abstract class Vehicle : MonoBehaviour
 
             SlideSpeed = Vector3.Dot(transform.right, m_rigidbody.velocity);
 
-            if (!isBraking)
-            {
-                currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
-                // Apply Grip
-                m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
-            }
+            currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
+            // Apply Grip
+            m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
         }
     }
 
@@ -80,6 +77,23 @@ public abstract class Vehicle : MonoBehaviour
             {
                 torque = Mathf.Lerp(-MIN_TURN_RADIUS_INPUT, -MAX_TURN_RADIUS_INPUT, -turn);
             }
+
+            Vector3 currTorque = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
+
+            //Debug.Log(currTorque.y);
+
+            // Corrective turning
+            if (currTorque.y > 0.1 && turn >= 0)
+            {
+                Debug.Log("Left");
+                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT) * -1);
+            }
+            else if (currTorque.y < 0.1 && turn <= 0)
+            {
+                Debug.Log("Right");
+                m_rigidbody.AddTorque((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT);
+            }
+
             m_rigidbody.AddTorque(torque * transform.up);
         }
     }
