@@ -18,7 +18,8 @@ public abstract class Vehicle : MonoBehaviour
     public float CurrentSpeed = 0;
 
     private const float MAX_TURN_RADIUS_INPUT = 2000;
-    private const float MIN_TURN_RADIUS_INPUT = 1500;
+    private const float MIN_TURN_RADIUS_INPUT = 1600;
+    private const float CORRECT_TURN_MOD = 2.25f;
 
     private bool wheelsOnGround = false;
 
@@ -80,21 +81,18 @@ public abstract class Vehicle : MonoBehaviour
 
             Vector3 currTorque = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
 
-            //Debug.Log(currTorque.y);
-
             // Corrective turning
-            if (currTorque.y > 0.1 && turn >= 0)
+            if ((Mathf.Round(currTorque.y) > 0 && turn <= 0) ||
+                (Mathf.Round(currTorque.y) < 0 && turn >= 0))
             {
-                Debug.Log("Left");
-                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT) * -1);
+                // Apply negative force against correct torque to straighten out car faster
+                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MAX_TURN_RADIUS_INPUT * CORRECT_TURN_MOD) * -1);
             }
-            else if (currTorque.y < 0.1 && turn <= 0)
+            else
             {
-                Debug.Log("Right");
-                m_rigidbody.AddTorque((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT);
+                m_rigidbody.AddTorque(torque * transform.up);
             }
 
-            m_rigidbody.AddTorque(torque * transform.up);
         }
     }
 
