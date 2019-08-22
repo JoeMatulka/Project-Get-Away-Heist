@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
     private Player player;
-    private const float CAM_REVERSE_VEL = -.75f;
+    private const float CAM_REVERSE_VEL = -1f;
     private const float CAM_REVERSE_INPUT = -.25f;
 
     public static float DEF_SMOOTH_SPEED = 15f;

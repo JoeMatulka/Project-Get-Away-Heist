@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    public static float BASE_SPEED = 32.5f;
+    public static float BASE_SPEED = 30f;
 
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;
@@ -18,8 +18,8 @@ public abstract class Vehicle : MonoBehaviour
     public float CurrentSpeed = 0;
 
     private const float MAX_TURN_RADIUS_INPUT = 2000;
-    private const float MIN_TURN_RADIUS_INPUT = 1600;
-    private const float CORRECT_TURN_MOD = 2.25f;
+    private const float MIN_TURN_RADIUS_INPUT = 1800;
+    private const float CORRECT_TURN_MOD = 2.5f;
 
     private bool wheelsOnGround = false;
 
@@ -88,11 +88,14 @@ public abstract class Vehicle : MonoBehaviour
                 // Apply negative force against correct torque to straighten out car faster
                 m_rigidbody.AddTorque(((currTorque.y * transform.up) * MAX_TURN_RADIUS_INPUT * CORRECT_TURN_MOD) * -1);
             }
-            else
-            {
-                m_rigidbody.AddTorque(torque * transform.up);
+
+            // Additive turning
+            if (Mathf.Round(currTorque.y) == 0 & Mathf.Abs(turn) > 0) {
+                Debug.Log("Hit");
+                torque *= CORRECT_TURN_MOD;
             }
 
+            m_rigidbody.AddTorque(torque * transform.up);
         }
     }
 
