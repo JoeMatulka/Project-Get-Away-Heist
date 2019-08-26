@@ -11,6 +11,9 @@ public class PlayerControls : MonoBehaviour
 
     public PlayerInput input;
 
+    public delegate void ButtonInputEventHandler(object sender, ButtonInputEventArgs e);
+    private event ButtonInputEventHandler m_buttonInputEvent;
+
     void Start() {
         // TODO fix this later
         input = GameObject.Find("Mobile Input Canvas").GetComponent<MobilePlayerInput>();
@@ -23,6 +26,7 @@ public class PlayerControls : MonoBehaviour
             m_accel = input.getAcceleration();
             m_steering = input.getSteering();
             m_isBraking = input.isBraking();
+
         }
         else {
             // TODO fix this later

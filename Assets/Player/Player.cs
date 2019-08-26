@@ -6,6 +6,8 @@ public class Player : Vehicle
 {
     public PlayerControls input;
 
+    public PlayerItem item;
+
     void Start()
     {
         input = GetComponent<PlayerControls>();

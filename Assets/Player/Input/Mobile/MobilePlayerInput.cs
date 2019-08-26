@@ -9,11 +9,6 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     private float accelInput, steerInput;
 
-    private float previousSteerInput;
-
-    private const float INPUT_SMASH_THRESHOLD = .35f;
-    private const float INPUT_STEER_BRAKE_THRESHOLD = .85f;
-
     void Start()
     {
         itemButton.onClick.AddListener(UseItem);
@@ -23,11 +18,6 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     {
         accelInput = accelJoystick.Vertical;
         steerInput = steerJoystick.Horizontal;
-    }
-
-    void LateUpdate()
-    {
-        previousSteerInput = steerJoystick.Horizontal;
     }
 
     public float getAcceleration()
