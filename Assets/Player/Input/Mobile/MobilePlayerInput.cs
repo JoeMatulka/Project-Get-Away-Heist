@@ -14,7 +14,10 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     private const float INPUT_SMASH_THRESHOLD = .35f;
     private const float INPUT_STEER_BRAKE_THRESHOLD = .85f;
 
-    private bool m_isBraking;
+    void Start()
+    {
+        itemButton.onClick.AddListener(UseItem);
+    }
 
     void Update()
     {
@@ -22,7 +25,8 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
         steerInput = steerJoystick.Horizontal;
     }
 
-    void LateUpdate() {
+    void LateUpdate()
+    {
         previousSteerInput = steerJoystick.Horizontal;
     }
 
@@ -38,10 +42,11 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     public bool isBraking()
     {
-        return m_isBraking;
+        throw new System.NotImplementedException();
     }
 
-    public void UseItem() {
+    public void UseItem()
+    {
 
     }
 

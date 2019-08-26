@@ -116,6 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   accelJoystick: {fileID: 4427997841885463004}
   steerJoystick: {fileID: 4427997842765523927}
+  itemButton: {fileID: 2376414665820354536}
 --- !u!1 &2231835172454182075
 GameObject:
   m_ObjectHideFlags: 0
