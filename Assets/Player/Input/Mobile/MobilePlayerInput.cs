@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MobilePlayerInput : MonoBehaviour, PlayerInput
 {
     public Joystick accelJoystick, steerJoystick;
+
+    public Button itemButton;
 
     private float accelInput, steerInput;
 
@@ -19,16 +20,6 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     {
         accelInput = accelJoystick.Vertical;
         steerInput = steerJoystick.Horizontal;
-
-        // Check if steering input has been smashed to enabled braking
-        if (Mathf.Abs(steerInput) >= INPUT_STEER_BRAKE_THRESHOLD && 
-            Mathf.Abs(steerInput - previousSteerInput) > INPUT_SMASH_THRESHOLD) {
-            m_isBraking = true;
-        }
-        // If braking, stop braking when input reaches below turn brake threshold
-        if (m_isBraking && Mathf.Abs(steerInput) <= INPUT_STEER_BRAKE_THRESHOLD) {
-            m_isBraking = false;
-        }
     }
 
     void LateUpdate() {
@@ -48,6 +39,10 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     public bool isBraking()
     {
         return m_isBraking;
+    }
+
+    public void UseItem() {
+
     }
 
     public void Pause()

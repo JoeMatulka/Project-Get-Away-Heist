@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private const float MAX_SLOPE_ANGLE = 45f;
 
-    public static float BASE_SPEED = 30f;
+    public static float BASE_SPEED = 28f;
 
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;
@@ -18,7 +18,7 @@ public abstract class Vehicle : MonoBehaviour
     public float CurrentSpeed = 0;
 
     private const float MAX_TURN_RADIUS_INPUT = 2000;
-    private const float MIN_TURN_RADIUS_INPUT = 1800;
+    private const float MIN_TURN_RADIUS_INPUT = 1500;
     private const float CORRECT_TURN_MOD = 2.5f;
 
     private bool wheelsOnGround = false;
@@ -55,7 +55,7 @@ public abstract class Vehicle : MonoBehaviour
         isBraking = braking;
         if (wheelsOnGround && isBraking)
         {
-            m_rigidbody.drag = 1f;
+            m_rigidbody.drag = 5f;
             m_rigidbody.angularDrag = 0;
         }
         else
@@ -85,13 +85,18 @@ public abstract class Vehicle : MonoBehaviour
             if ((Mathf.Round(currTorque.y) > 0 && turn <= 0) ||
                 (Mathf.Round(currTorque.y) < 0 && turn >= 0))
             {
+                Brake(true);
                 // Apply negative force against correct torque to straighten out car faster
-                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MAX_TURN_RADIUS_INPUT * CORRECT_TURN_MOD) * -1);
+                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT * CORRECT_TURN_MOD) * -1);
+            }
+            else
+            {
+                Brake(false);
             }
 
             // Additive turning
-            if (Mathf.Round(currTorque.y) == 0 & Mathf.Abs(turn) > 0) {
-                Debug.Log("Hit");
+            if (Mathf.Round(currTorque.y) == 0 & Mathf.Abs(turn) > 0)
+            {
                 torque *= CORRECT_TURN_MOD;
             }
 

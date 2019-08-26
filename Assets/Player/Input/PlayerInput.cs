@@ -7,4 +7,6 @@
     bool isBraking();
 
     void Pause();
+
+    void UseItem();
 }
