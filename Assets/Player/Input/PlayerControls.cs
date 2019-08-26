@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Handles the controls used for Player input
@@ -9,12 +10,13 @@ public class PlayerControls : MonoBehaviour
 
     private bool m_isBraking;
 
+    UnityEvent itemEvent = new UnityEvent();
+    UnityEvent pauseEvent = new UnityEvent();
+
     public PlayerInput input;
 
-    public delegate void ButtonInputEventHandler(object sender, ButtonInputEventArgs e);
-    private event ButtonInputEventHandler m_buttonInputEvent;
-
-    void Start() {
+    void Start()
+    {
         // TODO fix this later
         input = GameObject.Find("Mobile Input Canvas").GetComponent<MobilePlayerInput>();
     }
@@ -23,12 +25,14 @@ public class PlayerControls : MonoBehaviour
     {
         if (!Application.isEditor)
         {
-            m_accel = input.getAcceleration();
-            m_steering = input.getSteering();
+            m_accel = input.GetAcceleration();
+            m_steering = input.GetSteering();
             m_isBraking = input.isBraking();
 
+
         }
-        else {
+        else
+        {
             // TODO fix this later
             m_accel = Input.GetAxis("Vertical");
             m_steering = Input.GetAxis("Horizontal");
@@ -54,8 +58,18 @@ public class PlayerControls : MonoBehaviour
 
     public bool isBraking
     {
-        get {
+        get
+        {
             return m_isBraking;
         }
     }
+
+    public void ItemUsed() {
+
+    }
+
+    public void Pause() {
+
+    }
 }
+

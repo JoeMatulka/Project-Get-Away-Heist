@@ -1,8 +1,8 @@
 ﻿public interface PlayerInput 
 {
-    float getAcceleration();
+    float GetAcceleration();
 
-    float getSteering();
+    float GetSteering();
 
     bool isBraking();
 

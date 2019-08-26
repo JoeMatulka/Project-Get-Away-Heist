@@ -20,12 +20,12 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
         steerInput = steerJoystick.Horizontal;
     }
 
-    public float getAcceleration()
+    public float GetAcceleration()
     {
         return accelInput;
     }
 
-    public float getSteering()
+    public float GetSteering()
     {
         return steerInput;
     }
@@ -37,7 +37,7 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
 
     public void UseItem()
     {
-
+        throw new System.NotImplementedException();
     }
 
     public void Pause()
