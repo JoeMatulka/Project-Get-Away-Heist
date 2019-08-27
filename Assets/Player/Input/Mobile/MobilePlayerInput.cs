@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class MobilePlayerInput : MonoBehaviour, PlayerInput
@@ -6,6 +7,9 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
     public Joystick accelJoystick, steerJoystick;
 
     public Button itemButton;
+    private UnityEvent itemEvent;
+
+    private UnityEvent pauseEvent;
 
     private float accelInput, steerInput;
 
@@ -35,13 +39,23 @@ public class MobilePlayerInput : MonoBehaviour, PlayerInput
         throw new System.NotImplementedException();
     }
 
+    public void SetItemEvent(UnityEvent itemEvent)
+    {
+        this.itemEvent = itemEvent;
+    }
+
     public void UseItem()
     {
-        throw new System.NotImplementedException();
+        itemEvent.Invoke();
+    }
+
+    public void SetPauseEvent(UnityEvent pauseEvent)
+    {
+        this.pauseEvent = pauseEvent;
     }
 
     public void Pause()
     {
-        throw new System.NotImplementedException();
+        pauseEvent.Invoke();
     }
 }

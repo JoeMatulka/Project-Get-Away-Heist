@@ -11,6 +11,8 @@ public class Player : Vehicle
     void Start()
     {
         input = GetComponent<PlayerControls>();
+        Debug.Log("Player");
+        //input.getItemEvent().AddListener(UseItem);
 
         Rigidbody = GetComponent<Rigidbody>();
 
@@ -25,5 +27,9 @@ public class Player : Vehicle
 
         Accelerate(input.Acceleration);
         Turn(input.Steering);
+    }
+
+    private void UseItem() {
+        Debug.Log("Use Item");
     }
 }
