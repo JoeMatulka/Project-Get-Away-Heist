@@ -19,6 +19,8 @@ public class PlayerControls : MonoBehaviour
     {
         // TODO fix this later
         input = GameObject.Find("Mobile Input Canvas").GetComponent<MobilePlayerInput>();
+        input.SetItemEvent(itemEvent);
+        input.SetPauseEvent(pauseEvent);
     }
 
     void Update()
@@ -64,12 +66,12 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
-    public void ItemUsed() {
-
+    public UnityEvent GetItemEvent() {
+        return itemEvent;
     }
 
-    public void Pause() {
-
+    public UnityEvent GetPauseEvent() {
+        return pauseEvent;
     }
 }
 

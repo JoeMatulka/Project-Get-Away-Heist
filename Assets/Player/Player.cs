@@ -11,8 +11,7 @@ public class Player : Vehicle
     void Start()
     {
         input = GetComponent<PlayerControls>();
-        Debug.Log("Player");
-        //input.getItemEvent().AddListener(UseItem);
+        input.GetItemEvent().AddListener(UseItem);
 
         Rigidbody = GetComponent<Rigidbody>();
 
