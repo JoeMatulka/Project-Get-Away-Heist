@@ -12,12 +12,12 @@ public class RocketBoost : PlayerItem
     public RocketBoost()
     {
         itemName = NAME;
-        cooldown = COOLDOWN;
+        coolDown = COOLDOWN;
     }
     public override void Use()
     {
         if (CoolDownTimer <= 0) {
-            coolDownTimer = COOLDOWN;
+            StartCoroutine(StartCoolDownTimer());
             StartCoroutine(Boost());
         }
     }
