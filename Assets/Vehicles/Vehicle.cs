@@ -223,4 +223,8 @@ public abstract class Vehicle : MonoBehaviour
             return m_rigidbody;
         }
     }
+
+    public bool IsWheelsOnGround {
+        get { return wheelsOnGround; }
+    }
 }

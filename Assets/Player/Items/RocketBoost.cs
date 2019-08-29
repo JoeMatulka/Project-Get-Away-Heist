@@ -26,10 +26,12 @@ public class RocketBoost : PlayerItem
         float boostTime = 0;
         while (boostTime < DURATION)
         {
+            Player.gadgets.IsRocketBoosting = true;
             boostTime += Time.deltaTime;
             Player.Rigidbody.AddForce(BOOST_POWER * Player.transform.forward);
             yield return new WaitForEndOfFrame();
         }
+        Player.gadgets.IsRocketBoosting = false;
         yield return 0;
     }
 }

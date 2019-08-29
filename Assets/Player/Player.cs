@@ -8,8 +8,13 @@ public class Player : Vehicle
 
     public PlayerItem item;
 
+    public PlayerGadgets gadgets;
+
     void Start()
     {
+        gadgets = GetComponent<PlayerGadgets>();
+        gadgets.player = this;
+
         // TODO - Fix this later
         item = gameObject.AddComponent<RocketBoost>();
         item.Player = this;
