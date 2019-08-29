@@ -10,6 +10,10 @@ public class Player : Vehicle
 
     void Start()
     {
+        //item.Player = this;
+        // TODO - Fix this later
+        item = new RocketBoost();
+
         input = GetComponent<PlayerControls>();
         input.GetItemEvent().AddListener(UseItem);
 
@@ -29,6 +33,6 @@ public class Player : Vehicle
     }
 
     private void UseItem() {
-        Debug.Log("Use Item");
+        item.Use();
     }
 }

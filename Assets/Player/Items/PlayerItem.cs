@@ -1,11 +1,20 @@
-﻿public abstract class PlayerItem
+﻿using UnityEngine;
+public abstract class PlayerItem: MonoBehaviour
 {
-    protected string name;
+    public Player Player;
+
+    protected string itemName;
     protected float cooldown;
 
-    protected abstract void Use();
+    protected float coolDownTimer = 0;
 
-    public string Name {
-        get { return name; }
+    public abstract void Use();
+
+    public string ItemName {
+        get { return itemName; }
+    }
+
+    public float CoolDownTimer {
+        get { return coolDownTimer; }
     }
 }

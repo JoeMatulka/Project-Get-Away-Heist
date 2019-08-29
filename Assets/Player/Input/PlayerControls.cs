@@ -38,7 +38,10 @@ public class PlayerControls : MonoBehaviour
             // TODO fix this later
             m_accel = Input.GetAxis("Vertical");
             m_steering = Input.GetAxis("Horizontal");
-            m_isBraking = Input.GetKey(KeyCode.Space);
+            if (Input.GetKey(KeyCode.Space))
+            {
+                itemEvent.Invoke();
+            }
         }
     }
 
@@ -66,11 +69,13 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
-    public UnityEvent GetItemEvent() {
+    public UnityEvent GetItemEvent()
+    {
         return itemEvent;
     }
 
-    public UnityEvent GetPauseEvent() {
+    public UnityEvent GetPauseEvent()
+    {
         return pauseEvent;
     }
 }
