@@ -1446,6 +1446,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1627363192}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1691601315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3733633092671455349, guid: f4f92888a97b3ba469d31f4254e56163,
+    type: 3}
+  m_PrefabInstance: {fileID: 764287256}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1691601320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691601315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb01d87ea39d72469a0f31f4caca955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  IsRocketBoosting: 0
+  IsParachuting: 0
+  IsVacuuming: 0
 --- !u!1 &1761431253
 GameObject:
   m_ObjectHideFlags: 0
