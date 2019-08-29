@@ -7,6 +7,8 @@ public class RocketBoost : PlayerItem
     private const float COOLDOWN = 30;
     private const float DURATION = 3;
 
+    private const float BOOST_POWER = 2500;
+
     public RocketBoost()
     {
         itemName = NAME;
@@ -25,7 +27,7 @@ public class RocketBoost : PlayerItem
         while (boostTime < DURATION)
         {
             boostTime += Time.deltaTime;
-            Debug.Log("BOOST");
+            Player.Rigidbody.AddForce(BOOST_POWER * Player.transform.forward);
             yield return new WaitForEndOfFrame();
         }
         yield return 0;

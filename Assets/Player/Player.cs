@@ -10,9 +10,9 @@ public class Player : Vehicle
 
     void Start()
     {
-        //item.Player = this;
         // TODO - Fix this later
-        item = new RocketBoost();
+        item = gameObject.AddComponent<RocketBoost>();
+        item.Player = this;
 
         input = GetComponent<PlayerControls>();
         input.GetItemEvent().AddListener(UseItem);

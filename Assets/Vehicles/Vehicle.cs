@@ -38,9 +38,11 @@ public abstract class Vehicle : MonoBehaviour
     {
         inputAccel = accel;
         CurrentSpeed = m_rigidbody.velocity.magnitude;
-        if (wheelsOnGround && CurrentSpeed < MAX_VELOCITY)
+        if (wheelsOnGround)
         {
-            m_rigidbody.AddForce(((inputAccel * SPEED) * transform.forward) * weight);
+            if (CurrentSpeed < MAX_VELOCITY) {
+                m_rigidbody.AddForce(((inputAccel * SPEED) * transform.forward) * weight);
+            }
 
             SlideSpeed = Vector3.Dot(transform.right, m_rigidbody.velocity);
 
