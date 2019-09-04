@@ -7,7 +7,7 @@ public class RocketBoost : PlayerItem
     private const float COOLDOWN = 30;
     private const float DURATION = 3;
 
-    private const float BOOST_POWER = 2500;
+    private const float BOOST_POWER = 3000;
 
     public RocketBoost()
     {
@@ -29,6 +29,10 @@ public class RocketBoost : PlayerItem
             Player.gadgets.IsRocketBoosting = true;
             boostTime += Time.deltaTime;
             Player.Rigidbody.AddForce(BOOST_POWER * Player.transform.forward);
+            if (Player.IsWheelsOnGround) {
+                // Allows player to ride up walls while boosting
+                Player.Rigidbody.AddForce(BOOST_POWER * -Player.transform.up / 1.5f);
+            }
             yield return new WaitForEndOfFrame();
         }
         Player.gadgets.IsRocketBoosting = false;
