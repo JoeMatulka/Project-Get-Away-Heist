@@ -40,7 +40,8 @@ public abstract class Vehicle : MonoBehaviour
         CurrentSpeed = m_rigidbody.velocity.magnitude;
         if (wheelsOnGround)
         {
-            if (CurrentSpeed < MAX_VELOCITY) {
+            if (CurrentSpeed < MAX_VELOCITY)
+            {
                 m_rigidbody.AddForce(((inputAccel * SPEED) * transform.forward) * weight);
             }
 
@@ -49,6 +50,10 @@ public abstract class Vehicle : MonoBehaviour
             currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
             // Apply Grip
             m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
+        }
+        else {
+            // Apply Downward Force to prevent floatiness while not on the ground
+            m_rigidbody.AddForce((-Vector3.up * weight) * 2.5f);
         }
     }
 

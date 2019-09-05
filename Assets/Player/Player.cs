@@ -16,7 +16,7 @@ public class Player : Vehicle
         gadgets.player = this;
 
         // TODO - Fix this later
-        item = gameObject.AddComponent<RocketBoost>();
+        item = gameObject.AddComponent<Jump>();
         item.Player = this;
 
         input = GetComponent<PlayerControls>();

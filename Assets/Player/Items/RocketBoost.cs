@@ -5,7 +5,7 @@ public class RocketBoost : PlayerItem
 {
     private const string NAME = "ROCKET BOOST";
     private const float COOLDOWN = 30;
-    private const float DURATION = 3;
+    private const float DURATION = 5;
 
     private const float BOOST_POWER = 3000;
 

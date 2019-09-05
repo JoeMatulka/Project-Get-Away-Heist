@@ -1,6 +1,6 @@
 ﻿public enum PlayerItemLibrary
 {
     ROCKET_BOOST,
-    JUMP_PAD,
+    JUMP,
     SMOKE_SCREEN,
 }
