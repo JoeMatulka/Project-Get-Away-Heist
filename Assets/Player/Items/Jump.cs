@@ -25,15 +25,16 @@ public class Jump : PlayerItem
         }
     }
 
-    private IEnumerator ActivateJump() {
+    private IEnumerator ActivateJump()
+    {
         Player.Rigidbody.AddForce(JUMP_POWER * Player.transform.up, ForceMode.Impulse);
         float jumpTime = 0;
-        while (jumpTime < DURATION || !Player.IsWheelsOnGround)
+        while (jumpTime < DURATION)
         {
             Player.gadgets.IsParachuting = true;
+            jumpTime += Time.deltaTime;
             if (!Player.IsWheelsOnGround && Player.Rigidbody.velocity.y < 0)
             {
-                jumpTime += Time.deltaTime;
                 // Slowly fall back down
                 Player.Rigidbody.AddForce(GLIDE_POWER * Player.transform.up);
             }

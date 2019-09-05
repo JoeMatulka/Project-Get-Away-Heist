@@ -34,11 +34,11 @@ public abstract class Vehicle : MonoBehaviour
 
     private bool isBraking = false;
 
-    protected void Accelerate(float accel)
+    protected void Accelerate(float accel, bool ignoreWheels)
     {
         inputAccel = accel;
         CurrentSpeed = m_rigidbody.velocity.magnitude;
-        if (wheelsOnGround)
+        if (wheelsOnGround || ignoreWheels)
         {
             if (CurrentSpeed < MAX_VELOCITY)
             {
@@ -72,9 +72,9 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    protected void Turn(float turn)
+    protected void Turn(float turn, bool ignoreWheels)
     {
-        if (wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN)
+        if ((wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN) || ignoreWheels)
         {
             float torque = turn;
             if (torque > 0)
@@ -111,11 +111,11 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    protected void CheckGroundStatus()
+    protected void CheckGroundStatus(bool ignoreWheels)
     {
         CheckFrontBackSensors();
         CheckBottomSensor();
-        if (!wheelsOnGround)
+        if (!wheelsOnGround && !ignoreWheels)
         {
             AllignToGround();
         }

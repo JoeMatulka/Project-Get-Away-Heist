@@ -31,10 +31,18 @@ public class Player : Vehicle
 
     void FixedUpdate()
     {
-        CheckGroundStatus();
+        CheckGroundStatus(gadgets.IsParachuting);
 
-        Accelerate(input.Acceleration);
-        Turn(input.Steering);
+        float accel = input.Acceleration;
+        float steer = input.Steering;
+
+        if (gadgets.IsParachuting) {
+            accel /= 2;
+            steer /= 1000;
+        }
+
+        Accelerate(accel, gadgets.IsParachuting);
+        Turn(steer, gadgets.IsParachuting);
     }
 
     private void UseItem() {
