@@ -16,6 +16,11 @@ public class Jump : PlayerItem
         itemName = NAME;
         coolDown = COOLDOWN;
     }
+
+    void Start()
+    {
+        Player = GetComponent<Player>();
+    }
     public override void Use()
     {
         if (CoolDownTimer <= 0)

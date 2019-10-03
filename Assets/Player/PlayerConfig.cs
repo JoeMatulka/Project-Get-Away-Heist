@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerConfig : MonoBehaviour
 {
-    public Player Player;
+    private Player player;
 
     public int playerItemId = 0;
     private PlayerItem playerItem;
@@ -12,16 +12,18 @@ public class PlayerConfig : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GetComponent<Player>();
+
+        ApplyPlayerItemById(playerItemId);
     }
 
     private void ApplyPlayerItemById(int itemId) {
         switch ((PlayerItemLibrary) itemId) {
             case PlayerItemLibrary.ROCKET_BOOST:
-                playerItem = Player.gameObject.AddComponent<RocketBoost>();
+                playerItem = player.gameObject.AddComponent<RocketBoost>();
                 break;
             case PlayerItemLibrary.JUMP:
-                playerItem = Player.gameObject.AddComponent<Jump>();
+                playerItem = player.gameObject.AddComponent<Jump>();
                 break;
             case PlayerItemLibrary.NONE:
             default:

@@ -16,7 +16,7 @@ public class RocketBoost : PlayerItem
     }
 
     void Start() {
-        Debug.Log("Called");
+        Player = GetComponent<Player>();
     }
 
     public override void Use()
@@ -36,7 +36,7 @@ public class RocketBoost : PlayerItem
             Player.Rigidbody.AddForce(BOOST_POWER * Player.transform.forward);
             if (Player.IsWheelsOnGround) {
                 // Allows player to ride up walls while boosting
-                Player.Rigidbody.AddForce(BOOST_POWER * -Player.transform.up / 1.5f);
+                //Player.Rigidbody.AddForce(BOOST_POWER * -Player.transform.up / 1.5f);
             }
             yield return new WaitForEndOfFrame();
         }
