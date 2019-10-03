@@ -14,6 +14,11 @@ public class RocketBoost : PlayerItem
         itemName = NAME;
         coolDown = COOLDOWN;
     }
+
+    void Start() {
+        Debug.Log("Called");
+    }
+
     public override void Use()
     {
         if (CoolDownTimer <= 0) {

@@ -2,22 +2,21 @@
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerControls))]
+[RequireComponent(typeof(PlayerConfig))]
 public class Player : Vehicle
 {
     public PlayerControls input;
 
-    public PlayerItem item;
+    private PlayerConfig config;
 
     public PlayerGadgets gadgets;
 
     void Start()
     {
+        config = GetComponent<PlayerConfig>();
+
         gadgets = GetComponent<PlayerGadgets>();
         gadgets.player = this;
-
-        // TODO - Fix this later
-        item = gameObject.AddComponent<Jump>();
-        item.Player = this;
 
         input = GetComponent<PlayerControls>();
         input.GetItemEvent().AddListener(UseItem);
@@ -46,6 +45,6 @@ public class Player : Vehicle
     }
 
     private void UseItem() {
-        item.Use();
+        config.PlayerItem.Use();
     }
 }

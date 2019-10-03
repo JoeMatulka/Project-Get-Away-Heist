@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3733633092671455351}
   - component: {fileID: 3733633092671455350}
   - component: {fileID: 7434837461031989527}
+  - component: {fileID: 61192337537612113}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -62,6 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f4a1ddf0e1cdb4b8f5d107e252237d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentSpeed: 0
+  Grip: 70
+  SlideSpeed: 0
+  input: {fileID: 0}
+  gadgets: {fileID: 0}
 --- !u!114 &7434837461031989527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +78,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd74e866ceeef45428db36ace324addc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &61192337537612113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3733633092671455349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b63ac7694213fa44b0df700c78e53fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3733633092978091272

@@ -1,6 +1,8 @@
 ﻿public enum PlayerItemLibrary
 {
-    ROCKET_BOOST,
-    JUMP,
-    SMOKE_SCREEN,
+    // Item name and Id
+    NONE = 0,
+    ROCKET_BOOST = 1,
+    JUMP = 2,
+    SMOKE_SCREEN = 3,
 }
