@@ -17,8 +17,10 @@ public class PlayerConfig : MonoBehaviour
         ApplyPlayerItemById(playerItemId);
     }
 
-    private void ApplyPlayerItemById(int itemId) {
-        switch ((PlayerItemLibrary) itemId) {
+    private void ApplyPlayerItemById(int itemId)
+    {
+        switch ((PlayerItemLibrary)itemId)
+        {
             case PlayerItemLibrary.ROCKET_BOOST:
                 playerItem = player.gameObject.AddComponent<RocketBoost>();
                 break;
@@ -28,12 +30,14 @@ public class PlayerConfig : MonoBehaviour
             case PlayerItemLibrary.NONE:
             default:
                 break;
-                
+
         }
     }
 
-    public PlayerItem PlayerItem {
-        get {
+    public PlayerItem PlayerItem
+    {
+        get
+        {
             return playerItem;
         }
     }

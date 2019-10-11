@@ -8,7 +8,7 @@ public class PlayerCamera : MonoBehaviour
     private const float CAM_REVERSE_VEL = -2.5f;
     private const float CAM_REVERSE_INPUT = -.25f;
 
-    public static float DEF_SMOOTH_SPEED = 15f;
+    public static float DEF_SMOOTH_SPEED = 20f;
     public static Vector3 DEF_CAM_OFFEST = new Vector3(0, -1, 2);
 
     public float smoothSpeed = DEF_SMOOTH_SPEED;
@@ -29,7 +29,7 @@ public class PlayerCamera : MonoBehaviour
             
             // Rotation
             var newRotation = Quaternion.LookRotation(position - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, (smoothSpeed) * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, (smoothSpeed * 2) * Time.deltaTime);
 
             // Follow
             float zOffset = offset.z;
