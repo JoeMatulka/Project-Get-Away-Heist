@@ -11,6 +11,8 @@ public abstract class Vehicle : MonoBehaviour
 
     public static float BASE_SPEED = 28f;
 
+    private const float SMOOTH_ROT_SPEED = 20f;
+
     protected float SPEED = BASE_SPEED;
     private const float MAX_VELOCITY = 20;
     private const float SPEED_THRESHOLD_TO_TURN = 2f;
@@ -135,7 +137,7 @@ public abstract class Vehicle : MonoBehaviour
         if (Physics.Raycast(transform.localPosition, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            SetSmoothRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
         }
         else
         {
@@ -194,13 +196,17 @@ public abstract class Vehicle : MonoBehaviour
             if (Vector3.Angle(hit.normal, hitDir) - 90 <= MAX_SLOPE_ANGLE)
             {
                 // Only allign with normals from hit if the normal is under the max slope angle
-                transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+                SetSmoothRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
             }
         }
         else
         {
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(rayDirection) * (length), Color.white);
         }
+    }
+
+    private void SetSmoothRotation(Quaternion targetRotation) {
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * SMOOTH_ROT_SPEED);
     }
 
     protected float Weight
