@@ -7,14 +7,17 @@ public abstract class Vehicle : MonoBehaviour
 
     protected BoxCollider Collider;
 
+    // Used for ignoring ground allignment at certain angles
     private const float MAX_SLOPE_ANGLE = 45f;
+    //Used to ignore slight changes in ground angles, prevents bumpy ride
+    private const float SLOPE_DIFF_IGNORE_ANGLE = 2f;
 
     public static float BASE_SPEED = 28f;
 
     private const float SMOOTH_ROT_SPEED = 20f;
 
     protected float SPEED = BASE_SPEED;
-    private const float MAX_VELOCITY = 20;
+    private const float MAX_VELOCITY = 25;
     private const float SPEED_THRESHOLD_TO_TURN = 2f;
     private float inputAccel = 0;
     public float CurrentSpeed = 0;
@@ -53,7 +56,8 @@ public abstract class Vehicle : MonoBehaviour
             // Apply Grip
             m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
         }
-        else {
+        else
+        {
             // Apply Downward Force to prevent floatiness while not on the ground
             m_rigidbody.AddForce((-Vector3.up * weight) * 2.5f);
         }
@@ -193,7 +197,9 @@ public abstract class Vehicle : MonoBehaviour
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
             // Need to determine which ray was hit
             Vector3 hitDir = inputAccel > 0 ? transform.forward : -transform.forward;
-            if (Vector3.Angle(hit.normal, hitDir) - 90 <= MAX_SLOPE_ANGLE)
+            float colAngle = Vector3.Angle(hit.normal, hitDir) - 90;
+            if ((colAngle - transform.rotation.x) >= SLOPE_DIFF_IGNORE_ANGLE &&
+                colAngle <= MAX_SLOPE_ANGLE)
             {
                 // Only allign with normals from hit if the normal is under the max slope angle
                 SetSmoothRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
@@ -205,7 +211,8 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    private void SetSmoothRotation(Quaternion targetRotation) {
+    private void SetSmoothRotation(Quaternion targetRotation)
+    {
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * SMOOTH_ROT_SPEED);
     }
 
@@ -235,7 +242,8 @@ public abstract class Vehicle : MonoBehaviour
         }
     }
 
-    public bool IsWheelsOnGround {
+    public bool IsWheelsOnGround
+    {
         get { return wheelsOnGround; }
     }
 }
