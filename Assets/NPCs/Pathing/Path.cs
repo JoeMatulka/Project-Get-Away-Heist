@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Path : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Color rayColor = Color.cyan;
+    public PathWayPoint[] waypoints;
 
-    // Update is called once per frame
-    void Update()
+    void OnDrawGizmos()
     {
-        
+        Gizmos.color = rayColor;
+        waypoints = GetComponentsInChildren<PathWayPoint>();
+        for (int i = 0; i < waypoints.Length; i++)
+        {
+            Vector3 position = waypoints[i].transform.position;
+            if (i > 0)
+            {
+                Vector3 previous = waypoints[i - 1].transform.position;
+                Gizmos.DrawLine(previous, position);
+            }
+        }
     }
 }
