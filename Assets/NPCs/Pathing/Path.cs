@@ -18,6 +18,11 @@ public class Path : MonoBehaviour
             {
                 Vector3 previous = waypoints[i - 1].transform.position;
                 Gizmos.DrawLine(previous, position);
+                if (waypoints[i].lastWayPoint)
+                {
+                    Vector3 first = waypoints[0].transform.position;
+                    Gizmos.DrawLine(position, first);
+                }
             }
         }
     }

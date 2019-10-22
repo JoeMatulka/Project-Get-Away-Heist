@@ -7,6 +7,8 @@ public class PathWayPoint : MonoBehaviour
     // Dictates that when a vehicle gets to this way point they stop
     public bool stop;
 
+    public bool lastWayPoint = false;
+
     void OnDrawGizmos()
     {
         Gizmos.color = stop ? Color.red : Color.green;
