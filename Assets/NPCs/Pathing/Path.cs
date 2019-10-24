@@ -7,6 +7,7 @@ public class Path : MonoBehaviour
     public Color rayColor = Color.cyan;
     public PathWayPoint[] waypoints;
 
+    public bool reverse;
     void OnDrawGizmos()
     {
         Gizmos.color = rayColor;
