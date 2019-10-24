@@ -14,4 +14,12 @@ public class PathWayPoint : MonoBehaviour
         Gizmos.color = stop ? Color.red : Color.green;
         Gizmos.DrawWireSphere(transform.localPosition, .25f);
     }
+
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.position;
+        }
+    }
 }

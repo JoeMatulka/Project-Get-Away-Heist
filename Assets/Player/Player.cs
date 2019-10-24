@@ -35,7 +35,8 @@ public class Player : Vehicle
         float accel = input.Acceleration;
         float steer = input.Steering;
 
-        if (gadgets.IsParachuting) {
+        if (gadgets.IsParachuting)
+        {
             accel /= 2;
             steer /= 1000;
         }
@@ -44,7 +45,8 @@ public class Player : Vehicle
         Turn(steer, gadgets.IsParachuting);
     }
 
-    private void UseItem() {
+    private void UseItem()
+    {
         config.PlayerItem.Use();
     }
 }
