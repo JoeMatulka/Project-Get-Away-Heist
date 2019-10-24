@@ -29,6 +29,10 @@ public class Civilian : Vehicle
     {
         CheckGroundStatus(false);
 
+        StartCoroutine(MoveToDestination());
+    }
+
+    private IEnumerator MoveToDestination() {
         if (destination == null)
         {
             destination = Path.waypoints[CurrentDestinationIndex];
@@ -41,11 +45,20 @@ public class Civilian : Vehicle
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
 
             Accelerate(Speed, false);
+            yield return null;
         }
         else
         {
-            CurrentDestinationIndex++;
-            destination = Path.waypoints[CurrentDestinationIndex];
+            // Wait if current destination is marked for stop
+            if (!destination.stop)
+            {
+                IncrementDestination();
+            }
         }
+    }
+
+    private void IncrementDestination() {
+        CurrentDestinationIndex++;
+        destination = Path.waypoints[CurrentDestinationIndex];
     }
 }
