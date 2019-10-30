@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PathWayPoint : MonoBehaviour
 {
+    public static readonly string WAYPOINT_GAMEOBJECT_NAME = "waypoint";
+
     // Dictates that when a vehicle gets to this way point they stop
     public bool stop;
 

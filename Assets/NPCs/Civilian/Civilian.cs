@@ -39,7 +39,7 @@ public class Civilian : Vehicle
 
         if (Path.reverse)
         {
-            CurrentDestinationIndex = Path.waypoints.Length - 1;
+            CurrentDestinationIndex = Path.Waypoints.Length - 1;
         }
     }
 
@@ -102,7 +102,7 @@ public class Civilian : Vehicle
     {
         if (destination == null)
         {
-            destination = Path.waypoints[CurrentDestinationIndex];
+            destination = Path.Waypoints[CurrentDestinationIndex];
         }
 
         if (Vector3.Distance(transform.position, destination.Position) > distToStop)
@@ -140,20 +140,20 @@ public class Civilian : Vehicle
         {
             CurrentDestinationIndex++;
         }
-        destination = Path.waypoints[CurrentDestinationIndex];
+        destination = Path.Waypoints[CurrentDestinationIndex];
     }
 
     private void DecrementDestination()
     {
         if (CurrentDestinationIndex == 0)
         {
-            CurrentDestinationIndex = Path.waypoints.Length - 1;
+            CurrentDestinationIndex = Path.Waypoints.Length - 1;
         }
         else
         {
             CurrentDestinationIndex--;
         }
-        destination = Path.waypoints[CurrentDestinationIndex];
+        destination = Path.Waypoints[CurrentDestinationIndex];
     }
 
     public CivilianState AIState
