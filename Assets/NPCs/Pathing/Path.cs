@@ -8,6 +8,7 @@ public class Path : MonoBehaviour
     private PathWayPoint[] waypoints;
 
     private const float WAYPOINT_DIST_THRESHOLD = .5f;
+    private const int MAX_NUMBER_WAYPOINTS = 250;
 
     public bool reverse;
     void OnDrawGizmos()
@@ -34,10 +35,11 @@ public class Path : MonoBehaviour
     {
         // Do not add if last waypoint is close to one being added
         PathWayPoint lastWaypoint;
-        if (transform.childCount > 0)
+        int children = transform.childCount;
+        if (children > 0)
         {
             lastWaypoint = transform.GetChild(0).GetComponent<PathWayPoint>();
-            if (Vector3.Distance(lastWaypoint.Position, waypointLocation) > WAYPOINT_DIST_THRESHOLD)
+            if (Vector3.Distance(lastWaypoint.Position, waypointLocation) < WAYPOINT_DIST_THRESHOLD)
             {
                 return;
             }
@@ -47,6 +49,10 @@ public class Path : MonoBehaviour
         gameObject.AddComponent<PathWayPoint>();
         gameObject.transform.parent = transform;
         gameObject.transform.SetAsFirstSibling();
+        if (children >= MAX_NUMBER_WAYPOINTS ) {
+            // Remove last child when maximum children are met
+            Destroy(transform.GetChild(children).gameObject);
+        }
     }
 
     public PathWayPoint[] Waypoints
