@@ -14,7 +14,6 @@ public class Player : Vehicle
     public Path PlayerTrailPath;
     private const string PLAYER_PATH_NAME = "Player Path";
     private readonly Color PLAYER_PATH_COLOR = Color.white;
-    private const float PLAYER_PATH_DRAW_TIME = .25f;
 
     void Start()
     {
@@ -35,8 +34,6 @@ public class Player : Vehicle
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
         PlayerTrailPath = playerPath.AddComponent<Path>();
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
-
-        InvokeRepeating("AddToPlayerTrail", PLAYER_PATH_DRAW_TIME, PLAYER_PATH_DRAW_TIME);
     }
 
     void FixedUpdate()
@@ -54,9 +51,15 @@ public class Player : Vehicle
 
         Accelerate(accel, gadgets.IsParachuting);
         Turn(steer, gadgets.IsParachuting);
+
+        if (!gadgets.IsParachuting)
+        {
+            AddToPlayerTrail();
+        }
     }
 
-    private void AddToPlayerTrail() {
+    private void AddToPlayerTrail()
+    {
         PlayerTrailPath.AddWayPoint(transform.position);
     }
 

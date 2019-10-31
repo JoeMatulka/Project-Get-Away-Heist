@@ -7,7 +7,7 @@ public class Path : MonoBehaviour
     public Color rayColor = Color.cyan;
     private PathWayPoint[] waypoints;
 
-    private const float WAYPOINT_DIST_THRESHOLD = .5f;
+    private const float WAYPOINT_DIST_THRESHOLD = 2.5f;
     private const int MAX_NUMBER_WAYPOINTS = 250;
 
     public bool reverse;
