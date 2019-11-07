@@ -31,25 +31,31 @@ public class Police : Vehicle
     void FixedUpdate()
     {
         CheckGroundStatus(false);
-        
-        if (player != null) {
+
+        if (player != null)
+        {
             FindDestination();
             MoveToDestination();
         }
     }
 
-    private void FindDestination() {
+    private void FindDestination()
+    {
         if (player.PlayerTrailPath != null &&
-            player.PlayerTrailPath.Waypoints != null) {
+            player.PlayerTrailPath.Waypoints != null)
+        {
             // Iterate through current player trail to navigate to player
-            foreach (PathWayPoint waypoint in player.PlayerTrailPath.Waypoints) {
-                if (destination == null) {
+            foreach (PathWayPoint waypoint in player.PlayerTrailPath.Waypoints)
+            {
+                if (destination == null)
+                {
                     destination = waypoint.Position;
                 }
 
                 float curDist = Vector3.Distance(transform.position, destination);
 
-                if (curDist > Vector3.Distance(transform.position, waypoint.Position)) {
+                if (curDist > Vector3.Distance(transform.position, waypoint.Position))
+                {
                     destination = waypoint.Position;
                 }
             }
@@ -58,12 +64,14 @@ public class Police : Vehicle
         Vector3 playerPos = player.transform.position;
         if (destination == null ||
             Vector3.Distance(transform.position, destination) >
-            Vector3.Distance(transform.position, playerPos)) {
+            Vector3.Distance(transform.position, playerPos))
+        {
             destination = playerPos;
         }
     }
 
-    private void MoveToDestination() {
+    private void MoveToDestination()
+    {
         Vector3 localTarget = transform.InverseTransformPoint(destination);
 
         float angle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
