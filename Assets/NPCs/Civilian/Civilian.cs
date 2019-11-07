@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Civilian : Vehicle
 {
-    public float Speed = .5f;
+    public float Speed = .45f;
     private float origSpeed = .5f;
 
     private const float TURN_SMOOTH_SPEED = 0.5f;
@@ -36,11 +34,6 @@ public class Civilian : Vehicle
         sensor.rayLength = SENSOR_LENGTH;
 
         Weight = 200;
-
-        if (Path.reverse)
-        {
-            CurrentDestinationIndex = Path.Waypoints.Length - 1;
-        }
     }
 
     // Update is called once per frame
@@ -76,7 +69,10 @@ public class Civilian : Vehicle
             }
         }
 
-        MoveToDestination();
+        if (Path != null && Path.Waypoints != null)
+        {
+            MoveToDestination();
+        }
     }
 
     void OnCollisionEnter(Collision collider)
@@ -102,7 +98,15 @@ public class Civilian : Vehicle
     {
         if (destination == null)
         {
-            destination = Path.Waypoints[CurrentDestinationIndex];
+            if (!Path.reverse)
+            {
+                destination = Path.Waypoints[CurrentDestinationIndex];
+            }
+            else
+            {
+                CurrentDestinationIndex = Path.Waypoints.Length - 1;
+                destination = Path.Waypoints[CurrentDestinationIndex];
+            }
         }
 
         if (Vector3.Distance(transform.position, destination.Position) > distToStop)
