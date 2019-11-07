@@ -8,7 +8,7 @@ public class Civilian : Vehicle
     public float Speed = .5f;
     private float origSpeed = .5f;
 
-    private const float TURN_SMOOTH_SPEED = 1.5f;
+    private const float TURN_SMOOTH_SPEED = 0.5f;
 
     private const float DEF_DIST_TO_STOP = 2.5f;
     private float distToStop = DEF_DIST_TO_STOP;
