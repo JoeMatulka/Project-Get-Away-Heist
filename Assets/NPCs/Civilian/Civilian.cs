@@ -3,7 +3,7 @@
 [RequireComponent(typeof(Rigidbody))]
 public class Civilian : Vehicle
 {
-    public float Speed = .45f;
+    private float speed = .475f;
     private float origSpeed = .5f;
 
     private const float TURN_SMOOTH_SPEED = 0.5f;
@@ -24,7 +24,7 @@ public class Civilian : Vehicle
 
     void Start()
     {
-        origSpeed = Speed;
+        origSpeed = speed;
 
         Rigidbody = GetComponent<Rigidbody>();
         Collider = GetComponentInChildren<BoxCollider>();
@@ -53,7 +53,7 @@ public class Civilian : Vehicle
 
         if (aiState.Equals(CivilianState.FRENZIED))
         {
-            Speed = origSpeed * FRENZIED_STATE_MOD;
+            speed = origSpeed * FRENZIED_STATE_MOD;
             distToStop = DEF_DIST_TO_STOP * FRENZIED_STATE_MOD;
 
             if (sensor.Contact != null)
@@ -115,7 +115,7 @@ public class Civilian : Vehicle
             // Smoothly rotate towards the target point.
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
 
-            Accelerate(Speed, false);
+            Accelerate(speed, false);
         }
         else
         {
