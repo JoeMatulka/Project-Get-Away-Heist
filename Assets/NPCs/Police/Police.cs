@@ -14,7 +14,8 @@ public class Police : Vehicle
 
     public PathWayPoint currentWaypoint;
     private int currentWaypointIndex = 0;
-    private float distToDestination = 8f;
+    private const float CHECK_DIST_TO_PLAYER = 50f;
+    private const float DIST_TO_DESTINATION = 8f;
     public bool pursuePlayerDirectly;
 
 
@@ -84,21 +85,10 @@ public class Police : Vehicle
     {
         // Check to see if player is closest destination
         Vector3 playerPos = player.transform.position;
-        if (currentWaypoint == null ||
-            Vector3.Distance(transform.position, currentWaypoint.Position) >
-            Vector3.Distance(transform.position, playerPos))
-        {
-            pursuePlayerDirectly = true;
-            currentWaypoint = null;
-            currentWaypointIndex = 0;
-        }
-        else
-        {
-            pursuePlayerDirectly = false;
-        }
+        CheckIfPlayerInSight(playerPos);
 
         if (!pursuePlayerDirectly &&
-            Vector3.Distance(transform.position, currentWaypoint.Position) < distToDestination)
+            Vector3.Distance(transform.position, currentWaypoint.Position) < DIST_TO_DESTINATION)
         {
             // Increment player path if available
             if (currentWaypointIndex - 1 >= 0)
@@ -118,12 +108,59 @@ public class Police : Vehicle
         Vector3 localTarget = transform.InverseTransformPoint(target);
 
         float angle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
+
         // Slow down for turns
         speed = Mathf.Abs(angle) > TURN_SLOWDOWN_THRESHOLD ? TURN_SPEED : STRAIGHT_SPEED;
+
         Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
         Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
         Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
         Accelerate(speed, false);
+    }
+
+    private void CheckIfPlayerInSight(Vector3 playerPos)
+    {
+        float distToPlayer = Vector3.Distance(transform.position, playerPos);
+        // Only check if player is in sight if distance to player is less than threshold
+        if (distToPlayer <= CHECK_DIST_TO_PLAYER)
+        {
+            // Bit shift the index of the layer (8) to get a bit mask
+            int layerMask = 1 << 8;
+
+            // This would cast rays only against colliders in layer 8.
+            // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+            layerMask = ~layerMask;
+
+            RaycastHit hit;
+
+            // TODO: Clean up this logic
+            if (Physics.Linecast(transform.localPosition, playerPos - transform.localPosition, out hit))
+            {
+                if (!hit.transform.tag.Equals("Player"))
+                {
+                    Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.green);
+                    pursuePlayerDirectly = true;
+                    currentWaypoint = null;
+                    currentWaypointIndex = 0;
+                }
+                else {
+                    Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.red);
+                    pursuePlayerDirectly = false;
+                    FindClosestWaypoint();
+                }
+            }
+            else
+            {
+                Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.red);
+                pursuePlayerDirectly = false;
+                FindClosestWaypoint();
+            }
+        }
+        else
+        {
+            pursuePlayerDirectly = false;
+            FindClosestWaypoint();
+        }
     }
 }
