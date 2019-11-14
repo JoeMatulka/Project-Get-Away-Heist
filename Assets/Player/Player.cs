@@ -5,6 +5,8 @@
 [RequireComponent(typeof(PlayerConfig))]
 public class Player : Vehicle
 {
+    public static string PLAYER_OBJ_NAME = "Player";
+
     public PlayerControls input;
 
     private PlayerConfig config;
@@ -17,6 +19,8 @@ public class Player : Vehicle
 
     void Start()
     {
+        name = PLAYER_OBJ_NAME;
+
         config = GetComponent<PlayerConfig>();
 
         gadgets = GetComponent<PlayerGadgets>();
@@ -32,6 +36,7 @@ public class Player : Vehicle
         Weight = 200;
 
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
+        playerPath.transform.SetParent(transform);
         PlayerTrailPath = playerPath.AddComponent<Path>();
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
     }

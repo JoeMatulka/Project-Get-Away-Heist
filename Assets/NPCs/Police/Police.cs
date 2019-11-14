@@ -25,7 +25,7 @@ public class Police : Vehicle
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = GameObject.FindGameObjectWithTag(Player.PLAYER_OBJ_NAME).GetComponent<Player>();
 
         Rigidbody = GetComponent<Rigidbody>();
         Collider = GetComponentInChildren<BoxCollider>();
@@ -135,9 +135,9 @@ public class Police : Vehicle
             RaycastHit hit;
 
             // TODO: Clean up this logic
-            if (Physics.Linecast(transform.localPosition, playerPos - transform.localPosition, out hit))
+            if (Physics.Linecast(transform.localPosition, playerPos - transform.localPosition, out hit, layerMask, QueryTriggerInteraction.Ignore))
             {
-                if (!hit.transform.tag.Equals("Player"))
+                if (hit.transform.name.Equals(Player.PLAYER_OBJ_NAME))
                 {
                     Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.green);
                     pursuePlayerDirectly = true;
