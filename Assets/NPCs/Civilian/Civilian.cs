@@ -94,6 +94,22 @@ public class Civilian : Vehicle
         }
     }
 
+    public void PullOver(Vector3 locationOfPolice)
+    {
+        Debug.Log(name + "is pulling over");
+        Quaternion currentRotation = transform.rotation;
+
+        float turnAxis = currentRotation.y;
+        turnAxis += locationOfPolice.x > transform.localPosition.x ? -FRENZIED_STATE_TURN_MOD : FRENZIED_STATE_TURN_MOD;
+
+        Quaternion targetRotation = new Quaternion(currentRotation.x, turnAxis, currentRotation.z, currentRotation.w);
+        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
+
+        Accelerate(speed, false);
+
+        Invoke("Halt", 2);
+    }
+
     private void MoveToDestination()
     {
         if (destination == null)
@@ -158,6 +174,10 @@ public class Civilian : Vehicle
             CurrentDestinationIndex--;
         }
         destination = Path.Waypoints[CurrentDestinationIndex];
+    }
+
+    public void Halt() {
+        aiState = CivilianState.HALTED;
     }
 
     public CivilianState AIState

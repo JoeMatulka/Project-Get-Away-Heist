@@ -10,6 +10,8 @@ public class NPCSensor : MonoBehaviour
 
     private GameObject sensorContact;
 
+    public Vector3[] rayDirections;
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -22,7 +24,13 @@ public class NPCSensor : MonoBehaviour
     private void CheckFrontSensor()
     {
         Vector3 position = transform.localPosition;
-        Vector3 direction = transform.TransformDirection(Vector3.forward);
+        
+        // Specify Ray Directions
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        Vector3 diagRight = transform.TransformDirection(new Vector3(.5f, 0, 1));
+        Vector3 diagLeft = transform.TransformDirection(new Vector3(-.5f, 0, 1));
+        Vector3[] directions = new Vector3[] { forward, diagLeft, diagRight };
+        rayDirections = directions;
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
 
@@ -32,15 +40,18 @@ public class NPCSensor : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.Raycast(position, direction, out hit, rayLength, layerMask))
-        {
-            Debug.DrawRay(position, direction * hit.distance, Color.red);
-            sensorContact = hit.collider.gameObject;
-        }
-        else
-        {
-            Debug.DrawRay(position, direction * rayLength, Color.green);
-            sensorContact = null;
+        foreach (Vector3 direction in directions) {
+            if (Physics.Raycast(position, direction, out hit, rayLength, layerMask))
+            {
+                Debug.DrawRay(position, direction * hit.distance, Color.red);
+                sensorContact = hit.collider.gameObject;
+                break;
+            }
+            else
+            {
+                Debug.DrawRay(position, direction * rayLength, Color.green);
+                sensorContact = null;
+            }
         }
     }
 

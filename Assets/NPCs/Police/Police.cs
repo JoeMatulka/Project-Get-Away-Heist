@@ -10,6 +10,7 @@ public class Police : Vehicle
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1;
     private const float TURN_SPEED = .75f;
+    private const float CONTACT_SPEED = .5f;
     private const float TURN_SLOWDOWN_THRESHOLD = 35f;
 
     public PathWayPoint currentWaypoint;
@@ -20,7 +21,8 @@ public class Police : Vehicle
 
 
     private NPCSensor sensor;
-    private const float SENSOR_LENGTH = 2.5f;
+    private const float SENSOR_LENGTH = 5f;
+    private const float CONTACT_TURN_MOD = 180;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +43,7 @@ public class Police : Vehicle
     void FixedUpdate()
     {
         CheckGroundStatus(false);
-
+        CheckSensors();
         if (player != null && !Disable)
         {
             if (currentWaypoint == null &&
@@ -108,15 +110,33 @@ public class Police : Vehicle
         Vector3 localTarget = transform.InverseTransformPoint(target);
 
         float angle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
-
         // Slow down for turns
         speed = Mathf.Abs(angle) > TURN_SLOWDOWN_THRESHOLD ? TURN_SPEED : STRAIGHT_SPEED;
+
+        if (sensor.Contact != null && !sensor.Contact.transform.tag.Equals(Player.PLAYER_OBJ_NAME))
+        {
+            float xPosOfContact = sensor.Contact.transform.position.x;
+            angle += xPosOfContact > transform.localPosition.x ? -CONTACT_TURN_MOD : CONTACT_TURN_MOD;
+            speed = CONTACT_SPEED;
+        }
 
         Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
         Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
         Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
         Accelerate(speed, false);
+    }
+
+    private void CheckSensors()
+    {
+        if (sensor.Contact != null)
+        {
+            if (sensor.Contact.GetComponent<Civilian>() != null)
+            {
+                Civilian civilian = sensor.Contact.GetComponent<Civilian>();
+                civilian.PullOver(transform.position);
+            }
+        }
     }
 
     private void CheckIfPlayerInSight(Vector3 playerPos)
@@ -134,21 +154,13 @@ public class Police : Vehicle
 
             RaycastHit hit;
 
-            // TODO: Clean up this logic
-            if (Physics.Linecast(transform.localPosition, playerPos - transform.localPosition, out hit, layerMask, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(transform.localPosition, playerPos - transform.localPosition, out hit, CHECK_DIST_TO_PLAYER, layerMask, QueryTriggerInteraction.Ignore) &&
+                hit.transform.name.Equals(Player.PLAYER_OBJ_NAME))
             {
-                if (hit.transform.name.Equals(Player.PLAYER_OBJ_NAME))
-                {
-                    Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.green);
-                    pursuePlayerDirectly = true;
-                    currentWaypoint = null;
-                    currentWaypointIndex = 0;
-                }
-                else {
-                    Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.red);
-                    pursuePlayerDirectly = false;
-                    FindClosestWaypoint();
-                }
+                Debug.DrawRay(transform.localPosition, playerPos - transform.localPosition, Color.green);
+                pursuePlayerDirectly = true;
+                currentWaypoint = null;
+                currentWaypointIndex = 0;
             }
             else
             {
@@ -156,11 +168,6 @@ public class Police : Vehicle
                 pursuePlayerDirectly = false;
                 FindClosestWaypoint();
             }
-        }
-        else
-        {
-            pursuePlayerDirectly = false;
-            FindClosestWaypoint();
         }
     }
 }
