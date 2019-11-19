@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Police : Vehicle
@@ -19,6 +20,8 @@ public class Police : Vehicle
     private const float DIST_TO_DESTINATION = 8f;
     public bool pursuePlayerDirectly;
 
+    private bool needsToReverse = false;
+    private Vector3 reverseFromTarget = Vector3.zero;
 
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 5f;
@@ -53,7 +56,30 @@ public class Police : Vehicle
             }
             else
             {
-                MoveToDestination();
+                if (!needsToReverse)
+                {
+                    MoveToDestination();
+                }
+                else
+                {
+                    Reverse();
+                }
+            }
+        }
+    }
+
+    void OnCollisionStay(Collision collisionInfo)
+    {
+        // TODO: Change this from plane to ground mesh, probably a tag that identifies as ground or something
+        if (!collisionInfo.collider.name.Equals("Plane") && !needsToReverse) {
+            foreach (ContactPoint contact in collisionInfo.contacts)
+            {
+                // TODO: Farm these variables out to constants
+                if (Vector3.Distance(contact.point, transform.localPosition) <= 1.5f &&
+                    Rigidbody.velocity.magnitude <= .3f) {
+                    reverseFromTarget = contact.point;
+                    needsToReverse = true;
+                }
             }
         }
     }
@@ -127,13 +153,21 @@ public class Police : Vehicle
         Accelerate(speed, false);
     }
 
+    private IEnumerator Reverse()
+    {
+        Accelerate(-speed, false);
+        // Back up until sensors are clear
+        yield return new WaitUntil(() => Vector3.Distance(reverseFromTarget, transform.localPosition) > 5);
+        needsToReverse = false;
+    }
+
     private void CheckSensors()
     {
         if (sensor.Contact != null)
         {
-            if (sensor.Contact.GetComponent<Civilian>() != null)
+            if (sensor.Contact.GetComponentInParent<Civilian>() != null)
             {
-                Civilian civilian = sensor.Contact.GetComponent<Civilian>();
+                Civilian civilian = sensor.Contact.GetComponentInParent<Civilian>();
                 civilian.PullOver(transform.position);
             }
         }

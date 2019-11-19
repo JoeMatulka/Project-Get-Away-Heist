@@ -96,18 +96,18 @@ public class Civilian : Vehicle
 
     public void PullOver(Vector3 locationOfPolice)
     {
-        Debug.Log(name + "is pulling over");
-        Quaternion currentRotation = transform.rotation;
+        if (aiState.Equals(CivilianState.NORMAL)) {
+            Quaternion currentRotation = transform.rotation;
 
-        float turnAxis = currentRotation.y;
-        turnAxis += locationOfPolice.x > transform.localPosition.x ? -FRENZIED_STATE_TURN_MOD : FRENZIED_STATE_TURN_MOD;
+            float turnAxis = currentRotation.y;
+            turnAxis += locationOfPolice.x > transform.localPosition.x ? -FRENZIED_STATE_TURN_MOD : FRENZIED_STATE_TURN_MOD;
 
-        Quaternion targetRotation = new Quaternion(currentRotation.x, turnAxis, currentRotation.z, currentRotation.w);
-        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
+            Quaternion targetRotation = new Quaternion(currentRotation.x, turnAxis, currentRotation.z, currentRotation.w);
+            transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
 
-        Accelerate(speed, false);
-
-        Invoke("Halt", 2);
+            Invoke("Halt", 2);
+            Invoke("SetAiStateToNormal", 5);
+        }
     }
 
     private void MoveToDestination()
@@ -178,6 +178,10 @@ public class Civilian : Vehicle
 
     public void Halt() {
         aiState = CivilianState.HALTED;
+    }
+
+    public void SetAiStateToNormal() {
+        aiState = CivilianState.NORMAL;
     }
 
     public CivilianState AIState
