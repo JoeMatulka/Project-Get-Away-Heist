@@ -11,7 +11,6 @@ public class Police : Vehicle
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1;
     private const float TURN_SPEED = .75f;
-    private const float CONTACT_SPEED = .5f;
     private const float TURN_SLOWDOWN_THRESHOLD = 35f;
 
     public PathWayPoint currentWaypoint;
@@ -20,8 +19,11 @@ public class Police : Vehicle
     private const float DIST_TO_DESTINATION = 8f;
     public bool pursuePlayerDirectly;
 
-    private bool needsToReverse = false;
+    public bool needsToReverse = false;
     private Vector3 reverseFromTarget = Vector3.zero;
+    private const float DIST_TO_REVERSE = 5f;
+    private const float CONTACT_DIST_TO_REVERSE = 1.5f;
+    private const float VEL_TO_REVERSE = .3f;
 
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 5f;
@@ -62,7 +64,7 @@ public class Police : Vehicle
                 }
                 else
                 {
-                    Reverse();
+                    StartCoroutine(Reverse());
                 }
             }
         }
@@ -74,9 +76,8 @@ public class Police : Vehicle
         if (!collisionInfo.collider.name.Equals("Plane") && !needsToReverse) {
             foreach (ContactPoint contact in collisionInfo.contacts)
             {
-                // TODO: Farm these variables out to constants
-                if (Vector3.Distance(contact.point, transform.localPosition) <= 1.5f &&
-                    Rigidbody.velocity.magnitude <= .3f) {
+                if (Vector3.Distance(contact.point, transform.localPosition) <= CONTACT_DIST_TO_REVERSE &&
+                    Rigidbody.velocity.magnitude <= VEL_TO_REVERSE) {
                     reverseFromTarget = contact.point;
                     needsToReverse = true;
                 }
@@ -143,7 +144,6 @@ public class Police : Vehicle
         {
             float xPosOfContact = sensor.Contact.transform.position.x;
             angle += xPosOfContact > transform.localPosition.x ? -CONTACT_TURN_MOD : CONTACT_TURN_MOD;
-            speed = CONTACT_SPEED;
         }
 
         Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
@@ -155,9 +155,9 @@ public class Police : Vehicle
 
     private IEnumerator Reverse()
     {
-        Accelerate(-speed, false);
+        Accelerate(-STRAIGHT_SPEED, false);
         // Back up until sensors are clear
-        yield return new WaitUntil(() => Vector3.Distance(reverseFromTarget, transform.localPosition) > 5);
+        yield return new WaitUntil(() => Vector3.Distance(reverseFromTarget, transform.localPosition) > DIST_TO_REVERSE);
         needsToReverse = false;
     }
 

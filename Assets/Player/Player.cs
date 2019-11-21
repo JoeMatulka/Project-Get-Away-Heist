@@ -36,7 +36,6 @@ public class Player : Vehicle
         Weight = 200;
 
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
-        playerPath.transform.SetParent(transform);
         PlayerTrailPath = playerPath.AddComponent<Path>();
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
     }
