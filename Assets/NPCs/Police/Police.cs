@@ -17,9 +17,9 @@ public class Police : Vehicle
     private int currentWaypointIndex = 0;
     private const float CHECK_DIST_TO_PLAYER = 50f;
     private const float DIST_TO_DESTINATION = 8f;
-    public bool pursuePlayerDirectly;
+    private bool pursuePlayerDirectly;
 
-    public bool needsToReverse = false;
+    private bool needsToReverse = false;
     private Vector3 reverseFromTarget = Vector3.zero;
     private const float DIST_TO_REVERSE = 5f;
     private const float CONTACT_DIST_TO_REVERSE = 1.5f;
