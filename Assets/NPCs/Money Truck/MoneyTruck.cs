@@ -6,7 +6,7 @@ public class MoneyTruck : Vehicle
 {
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1.25f;
-    private const float TURN_SPEED = .5f;
+    private const float TURN_SPEED = .375f;
 
     private const float DIST_TO_DESTINATION = 3.5f;
 
@@ -114,15 +114,17 @@ public class MoneyTruck : Vehicle
         // Determine next destination from given potential ones
         if (potentialNewDestinations.Count > 1)
         {
-            int index = Random.Range(0, potentialNewDestinations.Count - 1);
-            Debug.Log("Grabbing random " + index + ", from " + potentialNewDestinations.Count);
+            int index = Random.Range(0, potentialNewDestinations.Count);
             dest = potentialNewDestinations[index];
+        }
+        else if (potentialNewDestinations.Count == 1)
+        {
+            // If only one in potential just grab it
+            dest = potentialNewDestinations[0];
         }
         else
         {
-            Debug.Log("Grabbing one");
-            // If only one in potential just grab it
-            dest = potentialNewDestinations[0];
+            dest = destination.ConnectedWayPoints[0];
         }
         return dest;
     }
