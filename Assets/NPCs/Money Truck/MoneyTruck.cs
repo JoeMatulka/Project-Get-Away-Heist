@@ -6,7 +6,9 @@ public class MoneyTruck : Vehicle
 {
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1.25f;
-    private const float TURN_SPEED = .375f;
+    private const float TURN_SPEED = .35f;
+    // Multiplicative value used on calculating the turn rotation, allows for the money truck to make tighter turns at higher speeds
+    private const float ROT_TORQUE_MOD = 2.5f;
 
     private const float DIST_TO_DESTINATION = 3.5f;
 
@@ -16,6 +18,10 @@ public class MoneyTruck : Vehicle
     public PathWayPoint destination;
     // Dot calculation threshold to determine the next waypoint being chose
     private const float DEST_FIND_DOT_THRESHOLD = .5f;
+    // Used to determine if a connected waypoint is a viable option to go to next
+    private const float DEF_POTENTIAL_DEST_DOT = -0.05f;
+    private const float POTENTIAL_DEST_INCREMENT = .05f;
+    private float nextPotentialWaypointDot = DEF_POTENTIAL_DEST_DOT;
 
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
@@ -29,7 +35,7 @@ public class MoneyTruck : Vehicle
         sensor.Vehicle = this;
         sensor.rayLength = SENSOR_LENGTH;
 
-        Weight = 400;
+        Weight = 800;
     }
     void FixedUpdate()
     {
@@ -60,7 +66,7 @@ public class MoneyTruck : Vehicle
             speed = Mathf.Abs(angle) > TURN_SLOWDOWN_THRESHOLD ? TURN_SPEED : STRAIGHT_SPEED;
 
             Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
-            Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
+            Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime * ROT_TORQUE_MOD);
             Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
             Accelerate(speed, false);
@@ -106,8 +112,10 @@ public class MoneyTruck : Vehicle
         {
             // Check to see if vehicle is facing connected waypoint
             float dot = Vector3.Dot(transform.forward, (wp.Position - transform.localPosition).normalized);
-            if (dot >= -0.05)
+            if (dot >= nextPotentialWaypointDot)
             {
+                // Set this back to default, for next waypoint decision
+                nextPotentialWaypointDot = DEF_POTENTIAL_DEST_DOT;
                 potentialNewDestinations.Add(wp);
             }
         }
@@ -124,7 +132,9 @@ public class MoneyTruck : Vehicle
         }
         else
         {
-            dest = destination.ConnectedWayPoints[0];
+            // Try to find a suitable next waypoint, but with a wide DOT threshold this time
+            nextPotentialWaypointDot += POTENTIAL_DEST_INCREMENT;
+            FindClosestWayPoint();
         }
         return dest;
     }
