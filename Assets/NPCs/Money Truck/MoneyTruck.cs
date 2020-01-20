@@ -26,7 +26,7 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
-    void Start()
+    void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
         Collider = GetComponentInChildren<BoxCollider>();

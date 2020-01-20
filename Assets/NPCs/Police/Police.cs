@@ -29,8 +29,7 @@ public class Police : Vehicle
     private const float SENSOR_LENGTH = 5f;
     private const float CONTACT_TURN_MOD = 180;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         player = GameObject.FindGameObjectWithTag(Player.PLAYER_OBJ_NAME).GetComponent<Player>();
 
@@ -44,7 +43,6 @@ public class Police : Vehicle
         Weight = 200;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         CheckGroundStatus(false);

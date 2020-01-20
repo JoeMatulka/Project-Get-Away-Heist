@@ -17,7 +17,7 @@ public class Player : Vehicle
     private const string PLAYER_PATH_NAME = "Player Path";
     private readonly Color PLAYER_PATH_COLOR = Color.white;
 
-    void Start()
+    void Awake()
     {
         name = PLAYER_OBJ_NAME;
 
