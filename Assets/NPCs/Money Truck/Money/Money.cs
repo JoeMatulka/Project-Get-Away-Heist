@@ -2,26 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ParticleSystem))]
-[RequireComponent(typeof(BoxCollider))]
 public class Money : MonoBehaviour
 {
-    private int amount = 1000;
+    private float amount = 10000000f;
 
     private const float LIFETIME = 5;
 
     private ParticleSystem moneyParticles;
 
-    private BoxCollider collider;
+    private BoxCollider col;
 
 
     void Awake()
     {
-        
+        moneyParticles = GetComponentInChildren<ParticleSystem>();
+        col = GetComponentInChildren<BoxCollider>();
     }
 
     void Update()
     {
         
+    }
+
+    public float Amount {
+        get {
+            return amount;
+        }
     }
 }

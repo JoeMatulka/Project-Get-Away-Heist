@@ -26,6 +26,10 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
+    public Money SpawnedMoneyObj;
+    // TODO: Change this to be dynamic
+    public float amountOfMoneyLeft = 600000000f;
+
     void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
@@ -37,6 +41,13 @@ public class MoneyTruck : Vehicle
 
         Weight = 800;
     }
+
+    void Start()
+    {
+        // TODO: Move this out of start later and be controller by some sort of game controller
+        InvokeRepeating("SpawnMoney", .25f, .25f);
+    }
+    
     void FixedUpdate()
     {
         CheckGroundStatus(false);
@@ -137,5 +148,14 @@ public class MoneyTruck : Vehicle
             FindClosestWayPoint();
         }
         return dest;
+    }
+
+    private void SpawnMoney()
+    {
+        if (SpawnedMoneyObj != null && amountOfMoneyLeft >= 0)
+        {
+            Money moneyObj = Instantiate(SpawnedMoneyObj, transform.position, Quaternion.identity) as Money;
+            amountOfMoneyLeft -= moneyObj.Amount;
+        }
     }
 }

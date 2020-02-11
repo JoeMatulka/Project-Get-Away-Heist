@@ -157,4 +157,6 @@ MonoBehaviour:
   Grip: 70
   SlideSpeed: 0
   Path: {fileID: 0}
-  CurrentDestinationIndex: 0
+  destination: {fileID: 0}
+  SpawnedMoneyObj: {fileID: 2475871773960752518, guid: 4aa4aea7f9080be4f895f2507e616e1a,
+    type: 3}
