@@ -75,6 +75,7 @@ public class Player : Vehicle
     private void OnTriggerEnter(Collider col) {
         if (col.GetComponentInParent<Money>() != null) {
             Money money = col.GetComponentInParent<Money>();
+            // TODO Add money value to score
             Destroy(money.gameObject);
         }
     }

@@ -8,7 +8,7 @@ public class MoneyTruck : Vehicle
     private const float STRAIGHT_SPEED = 1.05f;
     private const float TURN_SPEED = .35f;
     // Multiplicative value used on calculating the turn rotation, allows for the money truck to make tighter turns at higher speeds
-    private const float ROT_TORQUE_MOD = 2.5f;
+    private const float ROT_TORQUE_MOD = 2.25f;
 
     private const float DIST_TO_DESTINATION = 3.5f;
 
@@ -26,6 +26,8 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
+    private const string MONEY_TRAIL_GAME_OBJ= "Money Trail";
+    private GameObject moneyTrail;
     public Money SpawnedMoneyObj;
     // TODO: Change this to be dynamic
     public float amountOfMoneyLeft = 600000000f;
@@ -39,11 +41,12 @@ public class MoneyTruck : Vehicle
         sensor.Vehicle = this;
         sensor.rayLength = SENSOR_LENGTH;
 
-        Weight = 800;
+        Weight = 2000;
     }
 
     void Start()
     {
+        moneyTrail = new GameObject(MONEY_TRAIL_GAME_OBJ);
         // TODO: Move this out of start later and be controller by some sort of game controller
         InvokeRepeating("SpawnMoney", .25f, .25f);
     }
@@ -150,11 +153,22 @@ public class MoneyTruck : Vehicle
         return dest;
     }
 
+    private void OnCollisionEnter(Collision col) {
+        if (col.gameObject.GetComponent<Vehicle>() != null) {
+            Vehicle vehicle = col.gameObject.GetComponent<Vehicle>();
+            Vector3 oppositeVector = vehicle.transform.position  - transform.position;
+            oppositeVector.Normalize();
+
+            vehicle.Rigidbody.AddForce(oppositeVector * 20, ForceMode.Impulse);
+        }
+    }
+
     private void SpawnMoney()
     {
         if (SpawnedMoneyObj != null && amountOfMoneyLeft >= 0)
         {
             Money moneyObj = Instantiate(SpawnedMoneyObj, transform.position, Quaternion.identity) as Money;
+            moneyObj.transform.SetParent(moneyTrail.transform);
             amountOfMoneyLeft -= moneyObj.Amount;
         }
     }
