@@ -6,7 +6,10 @@ public class Money : MonoBehaviour
 {
     private float amount = 10000000f;
 
-    private const float LIFETIME = 5;
+    private const float DEGRADE_INTERVAL = 1;
+    private const float DEGRADE_AMOUNT = 1300000; 
+
+    private const float LIFETIME = 7.5f;
 
     private ParticleSystem moneyParticles;
 
@@ -17,11 +20,21 @@ public class Money : MonoBehaviour
     {
         moneyParticles = GetComponentInChildren<ParticleSystem>();
         col = GetComponentInChildren<BoxCollider>();
+        Destroy(gameObject, LIFETIME);
     }
 
-    void Update()
-    {
-        
+    void Start() {
+        InvokeRepeating("DegradeAmount", 0, DEGRADE_INTERVAL);
+    }
+
+    private void DegradeAmount() {
+        if (amount >= 0)
+        {
+            amount -= DEGRADE_AMOUNT;
+        }
+        else {
+            amount = 0;
+        }
     }
 
     public float Amount {

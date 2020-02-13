@@ -71,4 +71,11 @@ public class Player : Vehicle
     {
         config.PlayerItem.Use();
     }
+
+    private void OnTriggerEnter(Collider col) {
+        if (col.GetComponentInParent<Money>() != null) {
+            Money money = col.GetComponentInParent<Money>();
+            Destroy(money.gameObject);
+        }
+    }
 }

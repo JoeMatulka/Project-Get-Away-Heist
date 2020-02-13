@@ -138,7 +138,7 @@ public abstract class Vehicle : MonoBehaviour
 
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.localPosition, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(transform.localPosition, Vector3.down, out hit, Mathf.Infinity, layerMask, QueryTriggerInteraction.Ignore))
         {
             Debug.DrawRay(transform.localPosition, Vector3.down * hit.distance, Color.yellow);
             SetSmoothRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
@@ -163,7 +163,7 @@ public abstract class Vehicle : MonoBehaviour
 
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(Vector3.down), out hit, groundCheck, layerMask))
+        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(Vector3.down), out hit, groundCheck, layerMask, QueryTriggerInteraction.Ignore))
         {
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
             wheelsOnGround = true;
@@ -192,7 +192,7 @@ public abstract class Vehicle : MonoBehaviour
         // Check if vehicle is going forward or backwards
         Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
 
-        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(rayDirection), out hit, length, layerMask))
+        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(rayDirection), out hit, length, layerMask, QueryTriggerInteraction.Ignore))
         {
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(rayDirection) * hit.distance, Color.yellow);
             // Need to determine which ray was hit
