@@ -26,6 +26,9 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
+    private const float COLLISION_FORCE_BASE = 2000f;
+    private const float COLLISION_FORCE_Y = 1000f;
+
     private const string MONEY_TRAIL_GAME_OBJ= "Money Trail";
     private GameObject moneyTrail;
     public Money SpawnedMoneyObj;
@@ -157,9 +160,11 @@ public class MoneyTruck : Vehicle
         if (col.gameObject.GetComponent<Vehicle>() != null) {
             Vehicle vehicle = col.gameObject.GetComponent<Vehicle>();
             Vector3 oppositeVector = vehicle.transform.position  - transform.position;
+            // Add a little y axis to vector to pop car into the air
+            oppositeVector.y *= COLLISION_FORCE_Y;
             oppositeVector.Normalize();
 
-            vehicle.Rigidbody.AddForce(oppositeVector * 20, ForceMode.Impulse);
+            vehicle.Rigidbody.AddForce(oppositeVector * COLLISION_FORCE_BASE, ForceMode.Impulse);
         }
     }
 
