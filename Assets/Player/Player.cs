@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Heist;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerControls))]
@@ -16,6 +17,8 @@ public class Player : Vehicle
     public Path PlayerTrailPath;
     private const string PLAYER_PATH_NAME = "Player Path";
     private readonly Color PLAYER_PATH_COLOR = Color.white;
+
+    private ScoreEvent scoreEvent;
 
     void Awake()
     {
@@ -38,6 +41,10 @@ public class Player : Vehicle
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
         PlayerTrailPath = playerPath.AddComponent<Path>();
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
+    }
+
+    void Start() {
+        scoreEvent = HeistService.Instance.FindCurrentHeist().AddToScore;
     }
 
     void FixedUpdate()
@@ -75,7 +82,7 @@ public class Player : Vehicle
     private void OnTriggerEnter(Collider col) {
         if (col.GetComponentInParent<Money>() != null) {
             Money money = col.GetComponentInParent<Money>();
-            // TODO Add money value to score
+            scoreEvent.Invoke(money.Amount);
             Destroy(money.gameObject);
         }
     }
