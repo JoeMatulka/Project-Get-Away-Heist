@@ -41,9 +41,13 @@ public class Player : Vehicle
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
         PlayerTrailPath = playerPath.AddComponent<Path>();
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
+
+        // TODO: Remove this in the future
+        HeistService.Instance.CreateHeist();
     }
 
-    void Start() {
+    void Start()
+    {
         scoreEvent = HeistService.Instance.FindCurrentHeist().AddToScore;
     }
 
@@ -79,8 +83,10 @@ public class Player : Vehicle
         config.PlayerItem.Use();
     }
 
-    private void OnTriggerEnter(Collider col) {
-        if (col.GetComponentInParent<Money>() != null) {
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.GetComponentInParent<Money>() != null)
+        {
             Money money = col.GetComponentInParent<Money>();
             scoreEvent.Invoke(money.Amount);
             Destroy(money.gameObject);

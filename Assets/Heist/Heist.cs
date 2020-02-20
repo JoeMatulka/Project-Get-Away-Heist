@@ -3,7 +3,8 @@ using UnityEngine.Events;
 
 namespace Heist
 {
-    public enum HeistEndState { 
+    public enum HeistEndState
+    {
         SUCCESS,
         FAILED
     }
@@ -15,7 +16,7 @@ namespace Heist
     public class EndHeistEvent : UnityEvent<HeistEndState> { }
     public class HeistManager : MonoBehaviour
     {
-        public float Score = 0;
+        private float score = 0;
 
         // Heist life cycle
         private UnityEvent startHeistCountdown = new UnityEvent();
@@ -35,11 +36,12 @@ namespace Heist
 
         private void AddAmountToScore(float amount)
         {
-            Score += amount;
+            score += amount;
         }
 
-        private void RemoveAmountFromScore(float amount) {
-            Score -= amount;
+        private void RemoveAmountFromScore(float amount)
+        {
+            score -= amount;
             if (Score <= 0) { endHeist.Invoke(HeistEndState.FAILED); }
         }
 
@@ -52,9 +54,19 @@ namespace Heist
             addToScore.RemoveAllListeners();
         }
 
+        public float Score
+        {
+            get { return score; }
+        }
+
         public ScoreEvent AddToScore
         {
             get { return addToScore; }
+        }
+
+        public ScoreEvent RemoveFromScore
+        {
+            get { return removeFromScore; }
         }
 
         public UnityEvent StartHeistCountdown
@@ -85,7 +97,7 @@ namespace Heist
 
         public void CreateHeist()
         {
-            if (FindCurrentHeist() != null)
+            if (FindCurrentHeist() == null)
             {
                 new GameObject(HEIST_OBJ_NAME).AddComponent<HeistManager>();
             }
@@ -102,7 +114,13 @@ namespace Heist
 
         public HeistManager FindCurrentHeist()
         {
-            return GameObject.Find(HEIST_OBJ_NAME).GetComponent<HeistManager>();
+            HeistManager heistManager = null;
+            GameObject heistGameObject = GameObject.Find(HEIST_OBJ_NAME);
+            if (heistGameObject != null)
+            {
+                heistManager = heistGameObject.GetComponent<HeistManager>();
+            }
+            return heistManager;
         }
     }
 }

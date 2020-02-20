@@ -9,7 +9,7 @@ public class Money : MonoBehaviour
     private const float DEGRADE_INTERVAL = 1;
     private const float DEGRADE_AMOUNT = 1000000; 
 
-    private const float LIFETIME = 5f;
+    private const float LIFETIME = 6.25f;
 
     private ParticleSystem moneyParticles;
 
@@ -34,6 +34,7 @@ public class Money : MonoBehaviour
         }
         else {
             amount = 0;
+            Destroy(gameObject);
         }
     }
 
