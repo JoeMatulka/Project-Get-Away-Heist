@@ -25,6 +25,8 @@ public class Player : Vehicle
         name = PLAYER_OBJ_NAME;
 
         config = GetComponent<PlayerConfig>();
+        // TODO: Change this to come from player configuration later
+        config.PlayerItemId = (int) PlayerItemLibrary.JUMP;
 
         gadgets = GetComponent<PlayerGadgets>();
         gadgets.player = this;

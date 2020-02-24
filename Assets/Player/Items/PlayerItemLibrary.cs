@@ -5,4 +5,6 @@
     ROCKET_BOOST = 1,
     JUMP = 2,
     SMOKE_SCREEN = 3,
+    FAKE_POLICE_SIREN = 4,
+    SUPER_VACUUM = 5,
 }

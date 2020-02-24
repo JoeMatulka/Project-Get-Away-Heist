@@ -6,14 +6,16 @@ public class PlayerConfig : MonoBehaviour
 {
     private Player player;
 
-    public int playerItemId = 0;
+    private int playerItemId = 0;
     private PlayerItem playerItem;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         player = GetComponent<Player>();
+    }
 
+    void Start()
+    {
         ApplyPlayerItemById(playerItemId);
     }
 
@@ -40,5 +42,11 @@ public class PlayerConfig : MonoBehaviour
         {
             return playerItem;
         }
+    }
+
+    public int PlayerItemId
+    {
+        set { playerItemId = value; }
+        get { return playerItemId; }
     }
 }
