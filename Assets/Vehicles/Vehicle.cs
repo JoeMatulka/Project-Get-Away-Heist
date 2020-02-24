@@ -9,7 +9,7 @@ public abstract class Vehicle : MonoBehaviour
 
     // Used for ignoring ground allignment at certain angles
     private const float MAX_SLOPE_ANGLE = 45f;
-    //Used to ignore slight changes in ground angles, prevents bumpy ride
+    // Used to ignore slight changes in ground angles, prevents bumpy ride
     private const float SLOPE_DIFF_IGNORE_ANGLE = 2f;
 
     public static float BASE_SPEED = 28f;
@@ -39,8 +39,13 @@ public abstract class Vehicle : MonoBehaviour
 
     private bool isBraking = false;
 
+    public bool IsDisabled = false;
+
     protected void Accelerate(float accel, bool ignoreWheels)
     {
+        if (IsDisabled) {
+            return;
+        }
         inputAccel = accel;
         CurrentSpeed = m_rigidbody.velocity.magnitude;
         if (wheelsOnGround || ignoreWheels)
@@ -213,7 +218,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private void SetSmoothRotation(Quaternion targetRotation)
     {
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * SMOOTH_ROT_SPEED);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Mathf.Min(SMOOTH_ROT_SPEED, (Time.deltaTime * SMOOTH_ROT_SPEED) * CurrentSpeed));
     }
 
     protected float Weight

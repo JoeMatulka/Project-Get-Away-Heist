@@ -28,6 +28,6 @@ public class PlayerHUD : MonoBehaviour
     private void UpdateScoreDisplay(float amount)
     {
         // TODO: Add floating display to amount added or removed from the score
-        scoreDisplay.text = $"$ {heistManager.Score}";
+        scoreDisplay.text = $"$ {(double) heistManager.Score}";
     }
 }

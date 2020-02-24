@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using Heist;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoneyTruck : Vehicle
@@ -29,11 +31,13 @@ public class MoneyTruck : Vehicle
     private const float COLLISION_FORCE_BASE = 2000f;
     private const float COLLISION_FORCE_Y = 1000f;
 
-    private const string MONEY_TRAIL_GAME_OBJ= "Money Trail";
+    private const string MONEY_TRAIL_GAME_OBJ = "Money Trail";
+    private const float MONEY_SPAWN_INTERVAL = .25f;
     private GameObject moneyTrail;
     public Money SpawnedMoneyObj;
     // TODO: Change this to be dynamic
     public float amountOfMoneyLeft = 600000000f;
+    private UnityEvent outOfMoneyEvent;
 
     void Awake()
     {
@@ -49,16 +53,22 @@ public class MoneyTruck : Vehicle
 
     void Start()
     {
+        outOfMoneyEvent = HeistService.Instance.FindCurrentHeist().EndMoneyTruckPhase;
         moneyTrail = new GameObject(MONEY_TRAIL_GAME_OBJ);
         // TODO: Move this out of start later and be controller by some sort of game controller
-        InvokeRepeating("SpawnMoney", .25f, .25f);
+        StartSpawningMoney();
     }
-    
+
     void FixedUpdate()
     {
         CheckGroundStatus(false);
 
         MoveToDestination();
+    }
+
+    public void StartSpawningMoney()
+    {
+        InvokeRepeating("SpawnMoney", MONEY_SPAWN_INTERVAL, MONEY_SPAWN_INTERVAL);
     }
 
     private void MoveToDestination()
@@ -156,10 +166,17 @@ public class MoneyTruck : Vehicle
         return dest;
     }
 
-    private void OnCollisionEnter(Collision col) {
-        if (col.gameObject.GetComponent<Vehicle>() != null) {
+    private void OnCollisionEnter(Collision col)
+    {
+        if (amountOfMoneyLeft <= 0)
+        {
+            IsDisabled = true;
+            return;
+        }
+        if (col.gameObject.GetComponent<Vehicle>() != null)
+        {
             Vehicle vehicle = col.gameObject.GetComponent<Vehicle>();
-            Vector3 oppositeVector = vehicle.transform.position  - transform.position;
+            Vector3 oppositeVector = vehicle.transform.position - transform.position;
             // Add a little y axis to vector to pop car into the air
             oppositeVector.y *= COLLISION_FORCE_Y;
             oppositeVector.Normalize();
@@ -175,6 +192,11 @@ public class MoneyTruck : Vehicle
             Money moneyObj = Instantiate(SpawnedMoneyObj, transform.position, Quaternion.identity) as Money;
             moneyObj.transform.SetParent(moneyTrail.transform);
             amountOfMoneyLeft -= moneyObj.Amount;
+        }
+        else
+        {
+            outOfMoneyEvent.Invoke();
+            CancelInvoke();
         }
     }
 }
