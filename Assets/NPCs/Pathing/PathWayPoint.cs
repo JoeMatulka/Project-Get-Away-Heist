@@ -12,7 +12,7 @@ public class PathWayPoint : MonoBehaviour
     public bool lastWayPoint = false;
 
     // Connected waypoints to this waypoint, used for scripted drive pathing
-    public PathWayPoint[] ConnectedWayPoints;
+    public List<PathWayPoint> ConnectedWayPoints;
 
     void OnDrawGizmos()
     {

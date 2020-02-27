@@ -7,7 +7,7 @@ using Heist;
 public class MoneyTruck : Vehicle
 {
     private float speed = STRAIGHT_SPEED;
-    private const float STRAIGHT_SPEED = 1.05f;
+    private const float STRAIGHT_SPEED = 1f;
     private const float TURN_SPEED = .35f;
     // Multiplicative value used on calculating the turn rotation, allows for the money truck to make tighter turns at higher speeds
     private const float ROT_TORQUE_MOD = 2.25f;

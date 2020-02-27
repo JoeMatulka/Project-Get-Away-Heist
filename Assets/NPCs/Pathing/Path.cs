@@ -17,15 +17,31 @@ public class Path : MonoBehaviour
         waypoints = GetComponentsInChildren<PathWayPoint>();
         for (int i = 0; i < waypoints.Length; i++)
         {
-            Vector3 position = waypoints[i].transform.position;
-            if (i > 0)
+            Vector3 position = waypoints[i].Position;
+            if (waypoints[i].ConnectedWayPoints != null)
             {
-                Vector3 previous = waypoints[i - 1].transform.position;
-                Gizmos.DrawLine(previous, position);
-                if (waypoints[i].lastWayPoint)
+                Gizmos.color = Color.green;
+                foreach (PathWayPoint wp in waypoints[i].ConnectedWayPoints)
                 {
-                    Vector3 first = waypoints[0].transform.position;
-                    Gizmos.DrawLine(position, first);
+                    if (!wp.ConnectedWayPoints.Contains(waypoints[i]))
+                    {
+                        // Notify gizmo if connection is expected but not linked
+                        Gizmos.color = Color.red;
+                    }
+                    Gizmos.DrawLine(wp.Position, position);
+                }
+            }
+            else
+            {
+                if (i > 0)
+                {
+                    Vector3 previous = waypoints[i - 1].Position;
+                    Gizmos.DrawLine(previous, position);
+                    if (waypoints[i].lastWayPoint)
+                    {
+                        Vector3 first = waypoints[0].Position;
+                        Gizmos.DrawLine(position, first);
+                    }
                 }
             }
         }
@@ -49,7 +65,8 @@ public class Path : MonoBehaviour
         gameObject.AddComponent<PathWayPoint>();
         gameObject.transform.parent = transform;
         gameObject.transform.SetAsFirstSibling();
-        if (children >= MAX_NUMBER_WAYPOINTS ) {
+        if (children >= MAX_NUMBER_WAYPOINTS)
+        {
             // Remove last child when maximum children are met
             Destroy(transform.GetChild(children).gameObject);
         }
