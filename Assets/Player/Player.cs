@@ -50,9 +50,6 @@ public class Player : Vehicle
 
     void Start()
     {
-        // TODO: Remove this in the future
-        StartCoroutine(GameSceneManager.Instance.SetUpGameScene());
-
         scoreEvent = HeistService.Instance.FindCurrentHeist().AddToScore;
     }
 
