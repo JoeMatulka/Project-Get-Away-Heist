@@ -34,6 +34,11 @@ public class Civilian : Vehicle
         sensor.rayLength = SENSOR_LENGTH;
 
         Weight = 200;
+
+        // Rotate towards destination
+        if (destination != null) {
+            transform.LookAt(destination.transform);
+        }
     }
 
     // Update is called once per frame

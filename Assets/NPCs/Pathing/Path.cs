@@ -20,13 +20,13 @@ public class Path : MonoBehaviour
             Vector3 position = waypoints[i].Position;
             if (waypoints[i].ConnectedWayPoints != null)
             {
-                Gizmos.color = Color.green;
                 foreach (PathWayPoint wp in waypoints[i].ConnectedWayPoints)
                 {
                     if (!wp.ConnectedWayPoints.Contains(waypoints[i]))
                     {
                         // Notify gizmo if connection is expected but not linked
                         Gizmos.color = Color.red;
+                        Gizmos.DrawLine(wp.Position, position);
                     }
                     Gizmos.DrawLine(wp.Position, position);
                 }

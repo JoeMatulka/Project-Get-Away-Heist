@@ -45,6 +45,7 @@ public class Player : Vehicle
         PlayerTrailPath.rayColor = PLAYER_PATH_COLOR;
 
         // TODO: Remove this in the future
+        StartCoroutine(GameSceneManager.Instance.SetUpGameScene());
         HeistService.Instance.CreateHeist();
     }
 

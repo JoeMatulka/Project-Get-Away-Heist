@@ -6,13 +6,24 @@ using UnityEngine;
 
 public class GameSceneManager : Singleton<GameSceneManager>
 {
-    private const string NPC_PATH_TAG = "NPCPath";
+    public const string MONEY_TRUCK_PATH = "Money Truck Path";
+
+    public const string TRAFFIC_PATH_TAG = "Traffic Path";
+
 
     protected GameSceneManager() { }
 
-    public IEnumerator SetUpGameScene() {
+    public IEnumerator SetUpGameScene()
+    {
         // TODO: Create heist here
-        Path npcPath = GameObject.FindGameObjectWithTag(NPC_PATH_TAG).GetComponent<Path>();
-        yield return StartCoroutine(CivilianSpawner.Instance.SpawnVehilcesOnPath(npcPath, CivilianSpawnRate.NORMAL));
+
+        // Spawn traffic
+        GameObject[] trafficGameObjects = GameObject.FindGameObjectsWithTag(TRAFFIC_PATH_TAG);
+        Path[] trafficPaths = new Path[trafficGameObjects.Length];
+        for(int i = 0; i < trafficGameObjects.Length; i++)
+        {
+            trafficPaths[i] = trafficGameObjects[i].GetComponent<Path>();
+        }
+        yield return StartCoroutine(CivilianSpawner.Instance.SpawnVehilcesOnPaths(trafficPaths, CivilianSpawnRate.NORMAL));
     }
 }

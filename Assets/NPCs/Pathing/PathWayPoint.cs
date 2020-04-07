@@ -14,6 +14,9 @@ public class PathWayPoint : MonoBehaviour
     // Connected waypoints to this waypoint, used for scripted drive pathing
     public List<PathWayPoint> ConnectedWayPoints;
 
+    void Awake() { 
+        
+    }
     void OnDrawGizmos()
     {
         Gizmos.color = stop ? Color.red : Color.green;
