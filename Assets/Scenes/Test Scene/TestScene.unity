@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 689201554}
@@ -306,6 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 1333155897}
@@ -524,6 +526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 4
   lastWayPoint: 1
   ConnectedWayPoints:
   - {fileID: 2144668274}
@@ -805,6 +808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 2037591123}
@@ -1207,6 +1211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 74121187}
@@ -1522,6 +1527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 689201554}
@@ -1648,6 +1654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 4
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 2144668274}
@@ -2134,6 +2141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 1
   ConnectedWayPoints:
   - {fileID: 193527280}
@@ -2636,6 +2644,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 4
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 870333207}
@@ -2698,6 +2707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 1
   ConnectedWayPoints:
   - {fileID: 74121187}
@@ -2938,6 +2948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 1
   ConnectedWayPoints:
   - {fileID: 1904790717}
@@ -2986,6 +2997,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 0.25
   lastWayPoint: 1
   ConnectedWayPoints:
   - {fileID: 74121187}
@@ -3127,6 +3139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stop: 0
+  stopDistance: 4
   lastWayPoint: 0
   ConnectedWayPoints:
   - {fileID: 870333207}
@@ -3413,7 +3426,7 @@ PrefabInstance:
     - target: {fileID: 6343985134364506030, guid: 328f58ae71024b1479d1af1cbea32e61,
         type: 3}
       propertyPath: IsDisabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328f58ae71024b1479d1af1cbea32e61, type: 3}

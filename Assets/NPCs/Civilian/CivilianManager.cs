@@ -12,6 +12,15 @@ namespace CivilianManager
         NORMAL = 2,
         DENSE = 3,
     }
+
+    public class CivilianSpawn
+    {
+        public int destinationIndex;
+        public Vector3 position;
+
+        public CivilianSpawn() { }
+    }
+
     public class CivilianSpawner : Singleton<CivilianSpawner>
     {
         private const float SAFE_DIST_TO_SPAWN = 5f;
@@ -24,15 +33,15 @@ namespace CivilianManager
                 yield return new WaitUntil(() => path.Waypoints != null);
                 // Calculate the amount of civilians spawned
                 int amountToSpawn = (path.Waypoints.Length * (int)rate);
-                Vector3[] spawnPoints = GenerateSpawnPoints(path, amountToSpawn);
+                CivilianSpawn[] spawns = GenerateSpawns(path, amountToSpawn);
 
                 // Spawn civilians on spawn points
-                foreach (Vector3 spawnPoint in spawnPoints)
+                foreach (CivilianSpawn spawn in spawns)
                 {
-                    GameObject gameObject = Instantiate(Resources.Load("NPCs/Civilian/Civilian_car"), spawnPoint, Quaternion.identity) as GameObject;
+                    GameObject gameObject = Instantiate(Resources.Load("NPCs/Civilian/Civilian_car"), spawn.position, Quaternion.identity) as GameObject;
                     Civilian civilian = gameObject.GetComponent<Civilian>();
                     civilian.Path = path;
-                    civilian.IsDisabled = true;
+                    civilian.CurrentDestinationIndex = spawn.destinationIndex;
                     yield return null;
                 }
                 yield return null;
@@ -40,9 +49,9 @@ namespace CivilianManager
             yield return 0;
         }
 
-        private Vector3[] GenerateSpawnPoints(Path path, int amountToSpawn)
+        private CivilianSpawn[] GenerateSpawns(Path path, int amountToSpawn)
         {
-            List<Vector3> spawns = new List<Vector3>();
+            List<CivilianSpawn> spawns = new List<CivilianSpawn>();
             for (int i = 0; i < amountToSpawn; i++)
             {
                 spawns.Add(GenerateSafeSpawnOnPath(path, spawns));
@@ -50,8 +59,10 @@ namespace CivilianManager
             return spawns.ToArray();
         }
 
-        private Vector3 GenerateSafeSpawnOnPath(Path path, List<Vector3> spawns)
+        private CivilianSpawn GenerateSafeSpawnOnPath(Path path, List<CivilianSpawn> spawns)
         {
+            CivilianSpawn spawn = new CivilianSpawn();
+
             // Grab random index from the array for start point
             int first = Random.Range(0, path.Waypoints.Length);
 
@@ -60,15 +71,16 @@ namespace CivilianManager
 
             // Generate Spawn
             float pos = Random.Range(0.0f, 1.0f);
-            Vector3 spawn = Vector3.Lerp(path.Waypoints[first].Position, path.Waypoints[second].Position, pos);
+            spawn.position = Vector3.Lerp(path.Waypoints[first].Position, path.Waypoints[second].Position, pos);
+            spawn.destinationIndex = path.reverse ? first : second;
 
             // Determine if the spawn is safe
             if (spawns.Count > 0)
             {
                 bool safe = true;
-                foreach (Vector3 otherSpawn in spawns)
+                foreach (CivilianSpawn civilianSpawn in spawns)
                 {
-                    if (Vector3.Distance(otherSpawn, spawn) <= SAFE_DIST_TO_SPAWN)
+                    if (Vector3.Distance(civilianSpawn.position, spawn.position) <= SAFE_DIST_TO_SPAWN)
                     {
                         safe = false;
                         break;

@@ -6,13 +6,13 @@ public class Civilian : Vehicle
     private float speed = .475f;
     private float origSpeed = .5f;
 
-    private const float TURN_SMOOTH_SPEED = 0.5f;
+    private const float TURN_SMOOTH_SPEED = 1f;
 
     private const float DEF_DIST_TO_STOP = 2.5f;
     private float distToStop = DEF_DIST_TO_STOP;
 
     public Path Path;
-    private PathWayPoint destination;
+    public PathWayPoint Destination;
     public int CurrentDestinationIndex = 0;
 
     private NPCSensor sensor;
@@ -36,9 +36,7 @@ public class Civilian : Vehicle
         Weight = 200;
 
         // Rotate towards destination
-        if (destination != null) {
-            transform.LookAt(destination.transform);
-        }
+        transform.LookAt(Path.Waypoints[CurrentDestinationIndex].transform);
     }
 
     // Update is called once per frame
@@ -117,22 +115,22 @@ public class Civilian : Vehicle
 
     private void MoveToDestination()
     {
-        if (destination == null)
+        if (Destination == null)
         {
             if (!Path.reverse)
             {
-                destination = Path.Waypoints[CurrentDestinationIndex];
+                Destination = Path.Waypoints[CurrentDestinationIndex];
             }
             else
             {
                 CurrentDestinationIndex = Path.Waypoints.Length - 1;
-                destination = Path.Waypoints[CurrentDestinationIndex];
+                Destination = Path.Waypoints[CurrentDestinationIndex];
             }
         }
 
-        if (Vector3.Distance(transform.position, destination.Position) > distToStop)
+        if (Vector3.Distance(transform.position, Destination.Position) > distToStop)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(destination.Position - transform.position);
+            Quaternion targetRotation = Quaternion.LookRotation(Destination.Position - transform.position);
             // Smoothly rotate towards the target point.
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
 
@@ -141,7 +139,7 @@ public class Civilian : Vehicle
         else
         {
             // Wait if current destination is marked for stop
-            if (!destination.stop || aiState.Equals(CivilianState.FRENZIED))
+            if (!Destination.stop || aiState.Equals(CivilianState.FRENZIED))
             {
                 if (!Path.reverse)
                 {
@@ -157,7 +155,7 @@ public class Civilian : Vehicle
 
     private void IncrementDestination()
     {
-        if (destination.lastWayPoint)
+        if (Destination.lastWayPoint)
         {
             CurrentDestinationIndex = 0;
         }
@@ -165,7 +163,7 @@ public class Civilian : Vehicle
         {
             CurrentDestinationIndex++;
         }
-        destination = Path.Waypoints[CurrentDestinationIndex];
+        Destination = Path.Waypoints[CurrentDestinationIndex];
     }
 
     private void DecrementDestination()
@@ -178,7 +176,7 @@ public class Civilian : Vehicle
         {
             CurrentDestinationIndex--;
         }
-        destination = Path.Waypoints[CurrentDestinationIndex];
+        Destination = Path.Waypoints[CurrentDestinationIndex];
     }
 
     public void Halt() {

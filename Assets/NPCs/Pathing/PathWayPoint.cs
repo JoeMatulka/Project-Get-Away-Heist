@@ -8,6 +8,7 @@ public class PathWayPoint : MonoBehaviour
 
     // Dictates that when a vehicle gets to this way point they stop
     public bool stop;
+    public float stopDistance;
 
     public bool lastWayPoint = false;
 
@@ -19,8 +20,11 @@ public class PathWayPoint : MonoBehaviour
     }
     void OnDrawGizmos()
     {
+        if (stopDistance == 0) {
+            stopDistance = .25f;
+        }
         Gizmos.color = stop ? Color.red : Color.green;
-        Gizmos.DrawWireSphere(transform.localPosition, .25f);
+        Gizmos.DrawWireSphere(transform.localPosition, stopDistance);
     }
 
     public Vector3 Position
