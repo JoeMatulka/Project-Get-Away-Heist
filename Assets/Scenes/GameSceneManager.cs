@@ -20,7 +20,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
         // Spawn traffic
         GameObject[] trafficGameObjects = GameObject.FindGameObjectsWithTag(TRAFFIC_PATH_TAG);
         Path[] trafficPaths = new Path[trafficGameObjects.Length];
-        for(int i = 0; i < trafficGameObjects.Length; i++)
+        for (int i = 0; i < trafficGameObjects.Length; i++)
         {
             trafficPaths[i] = trafficGameObjects[i].GetComponent<Path>();
         }

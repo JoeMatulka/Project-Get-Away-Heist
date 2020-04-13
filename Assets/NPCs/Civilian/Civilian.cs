@@ -22,7 +22,7 @@ public class Civilian : Vehicle
     private const float FRENZIED_STATE_MOD = 2f;
     private const float FRENZIED_STATE_TURN_MOD = 10;
 
-    void Start()
+    void Awake()
     {
         origSpeed = speed;
 
@@ -34,9 +34,13 @@ public class Civilian : Vehicle
         sensor.rayLength = SENSOR_LENGTH;
 
         Weight = 200;
+    }
 
+    void Start()
+    {
         // Rotate towards destination
-        transform.LookAt(Path.Waypoints[CurrentDestinationIndex].transform);
+        Destination = Path.Waypoints[CurrentDestinationIndex];
+        transform.LookAt(Destination.transform);
     }
 
     // Update is called once per frame
@@ -99,7 +103,8 @@ public class Civilian : Vehicle
 
     public void PullOver(Vector3 locationOfPolice)
     {
-        if (aiState.Equals(CivilianState.NORMAL)) {
+        if (aiState.Equals(CivilianState.NORMAL))
+        {
             Quaternion currentRotation = transform.rotation;
 
             float turnAxis = currentRotation.y;
@@ -115,19 +120,6 @@ public class Civilian : Vehicle
 
     private void MoveToDestination()
     {
-        if (Destination == null)
-        {
-            if (!Path.reverse)
-            {
-                Destination = Path.Waypoints[CurrentDestinationIndex];
-            }
-            else
-            {
-                CurrentDestinationIndex = Path.Waypoints.Length - 1;
-                Destination = Path.Waypoints[CurrentDestinationIndex];
-            }
-        }
-
         if (Vector3.Distance(transform.position, Destination.Position) > distToStop)
         {
             Quaternion targetRotation = Quaternion.LookRotation(Destination.Position - transform.position);
@@ -179,11 +171,13 @@ public class Civilian : Vehicle
         Destination = Path.Waypoints[CurrentDestinationIndex];
     }
 
-    public void Halt() {
+    public void Halt()
+    {
         aiState = CivilianState.HALTED;
     }
 
-    public void SetAiStateToNormal() {
+    public void SetAiStateToNormal()
+    {
         aiState = CivilianState.NORMAL;
     }
 
