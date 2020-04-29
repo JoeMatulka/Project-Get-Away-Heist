@@ -148,12 +148,12 @@ public class Police : Vehicle
         Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
         Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
-        Accelerate(speed, false);
+        Move(speed, 0);
     }
 
     private IEnumerator Reverse()
     {
-        Accelerate(-STRAIGHT_SPEED, false);
+        Move(-STRAIGHT_SPEED, 0);
         // Back up until sensors are clear
         yield return new WaitUntil(() => Vector3.Distance(reverseFromTarget, transform.localPosition) > DIST_TO_REVERSE);
         needsToReverse = false;

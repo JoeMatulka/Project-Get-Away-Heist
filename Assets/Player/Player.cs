@@ -38,7 +38,7 @@ public class Player : Vehicle
 
         Collider = GetComponentInChildren<BoxCollider>();
 
-        Weight = 200;
+        Weight = 20;
 
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
         PlayerTrailPath = playerPath.AddComponent<Path>();
@@ -61,14 +61,7 @@ public class Player : Vehicle
         float accel = input.Acceleration;
         float steer = input.Steering;
 
-        if (gadgets.IsParachuting)
-        {
-            accel /= 2;
-            steer /= 1000;
-        }
-
-        Accelerate(accel, gadgets.IsParachuting);
-        Turn(steer, gadgets.IsParachuting);
+        Move(accel, steer);
 
         if (!gadgets.IsParachuting)
         {

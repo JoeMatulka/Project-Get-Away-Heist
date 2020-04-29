@@ -126,7 +126,7 @@ public class Civilian : Vehicle
             // Smoothly rotate towards the target point.
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
 
-            Accelerate(speed, false);
+            Move(speed, 0);
         }
         else
         {

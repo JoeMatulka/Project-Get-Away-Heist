@@ -96,7 +96,7 @@ public class MoneyTruck : Vehicle
             Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime * ROT_TORQUE_MOD);
             Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
-            Accelerate(speed, false);
+            Move(speed, 0);
         }
     }
 

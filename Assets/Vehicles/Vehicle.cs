@@ -2,6 +2,65 @@
 
 public abstract class Vehicle : MonoBehaviour
 {
+    public struct Stats
+    {
+        [Header("Movement Settings")]
+        [Tooltip("The maximum speed forwards")]
+        public float TopSpeed;
+
+        [Tooltip("How quickly the Kart reaches top speed.")]
+        public float Acceleration;
+
+        [Tooltip("The maximum speed backward.")]
+        public float ReverseSpeed;
+
+        [Tooltip("The rate at which the kart increases its backward speed.")]
+        public float ReverseAcceleration;
+
+        [Tooltip("How quickly the Kart starts accelerating from 0. A higher number means it accelerates faster sooner.")]
+        [Range(0.2f, 1)]
+        public float AccelerationCurve;
+
+        [Tooltip("How quickly the Kart slows down when going in the opposite direction.")]
+        public float Braking;
+
+        [Tooltip("How quickly to slow down when neither acceleration or reverse is held.")]
+        public float CoastingDrag;
+
+        [Range(0, 1)]
+        [Tooltip("The amount of side-to-side friction.")]
+        public float Grip;
+
+        [Tooltip("How quickly the Kart can turn left and right.")]
+        public float Steer;
+
+        [Tooltip("Additional gravity for when the Kart is in the air.")]
+        public float AddedGravity;
+
+        [Tooltip("How much the Kart tries to keep going forward when on bumpy terrain.")]
+        [Range(0, 1)]
+        public float Suspension;
+
+        // allow for stat adding for powerups.
+        public static Stats operator +(Stats a, Stats b)
+        {
+            return new Stats
+            {
+                Acceleration = a.Acceleration + b.Acceleration,
+                AccelerationCurve = a.AccelerationCurve + b.AccelerationCurve,
+                Braking = a.Braking + b.Braking,
+                CoastingDrag = a.CoastingDrag + b.CoastingDrag,
+                AddedGravity = a.AddedGravity + b.AddedGravity,
+                Grip = a.Grip + b.Grip,
+                ReverseAcceleration = a.ReverseAcceleration + b.ReverseAcceleration,
+                ReverseSpeed = a.ReverseSpeed + b.ReverseSpeed,
+                TopSpeed = a.TopSpeed + b.TopSpeed,
+                Steer = a.Steer + b.Steer,
+                Suspension = a.Suspension + b.Suspension
+            };
+        }
+    }
+
     private Rigidbody m_rigidbody;
     private float weight;
 
@@ -12,59 +71,216 @@ public abstract class Vehicle : MonoBehaviour
     // Used to ignore slight changes in ground angles, prevents bumpy ride
     private const float SLOPE_DIFF_IGNORE_ANGLE = 2f;
 
-    public static float BASE_SPEED = 28f;
-
     private const float SMOOTH_ROT_SPEED = 20f;
 
-    protected float SPEED = BASE_SPEED;
-    private const float MAX_VELOCITY = 25;
-    private const float SPEED_THRESHOLD_TO_TURN = 2f;
-    private float inputAccel = 0;
-    public float CurrentSpeed = 0;
-
-    private const float MAX_TURN_RADIUS_INPUT = 2000;
-    private const float MIN_TURN_RADIUS_INPUT = 1500;
-    private const float CORRECT_TURN_MOD = 2.5f;
+    private float inputAccel;
 
     private bool wheelsOnGround = false;
-
-    public float Grip = 70f;
-    private const float MAX_GRIP = 100f;
-    private float currentGrip;
+    public float MinHeightThreshold = 0.02f;
+    private float groundedHeight = float.MaxValue;
 
     private const float DEF_DRAG = 1;
     private const float DEF_ANGULAR_DRAG = .05f;
-
-    public float SlideSpeed;
 
     private bool isBraking = false;
 
     public bool IsDisabled = false;
 
-    protected void Accelerate(float accel, bool ignoreWheels)
+    Vehicle.Stats finalStats;
+
+    public Vehicle.Stats baseStats = new Vehicle.Stats
     {
-        if (IsDisabled) {
-            return;
-        }
+        TopSpeed = 12.5f,
+        Acceleration = 5f,
+        AccelerationCurve = 5f,
+        Braking = 10f,
+        ReverseAcceleration = 5f,
+        ReverseSpeed = 5f,
+        Steer = 10f,
+        CoastingDrag = 4f,
+        Grip = .95f,
+        AddedGravity = 1f,
+        Suspension = .2f
+    };
+
+
+    protected void Move(float accel, float turn)
+    {
+        finalStats = baseStats;
         inputAccel = accel;
-        CurrentSpeed = m_rigidbody.velocity.magnitude;
-        if (wheelsOnGround || ignoreWheels)
+        // apply vehicle physics
+        GroundVehicle();
+
+        if (!IsDisabled)
         {
-            if (CurrentSpeed < MAX_VELOCITY)
+            MoveVehicle(accel, turn);
+        }
+        GroundAirbourne();
+    }
+
+    void MoveVehicle(float accelInput, float turnInput)
+    {
+        // manual acceleration curve coefficient scalar
+        float accelerationCurveCoeff = 5;
+        Vector3 localVel = transform.InverseTransformVector(Rigidbody.velocity);
+
+        bool accelDirectionIsFwd = accelInput >= 0;
+        bool localVelDirectionIsFwd = localVel.z >= 0;
+
+        // use the max speed for the direction we are going--forward or reverse.
+        float maxSpeed = accelDirectionIsFwd ? finalStats.TopSpeed : finalStats.ReverseSpeed;
+        float accelPower = accelDirectionIsFwd ? finalStats.Acceleration : finalStats.ReverseAcceleration;
+
+        float accelRampT = Rigidbody.velocity.magnitude / maxSpeed;
+        float multipliedAccelerationCurve = finalStats.AccelerationCurve * accelerationCurveCoeff;
+        float accelRamp = Mathf.Lerp(multipliedAccelerationCurve, 1, accelRampT * accelRampT);
+
+        bool isBraking = accelDirectionIsFwd != localVelDirectionIsFwd;
+
+        // if we are braking (moving reverse to where we are going)
+        // use the braking accleration instead
+        float finalAccelPower = isBraking ? finalStats.Braking : accelPower;
+
+        float finalAcceleration = finalAccelPower * accelRamp;
+
+        // apply inputs to forward/backward
+        float turningPower = turnInput * finalStats.Steer;
+
+        Quaternion turnAngle = Quaternion.AngleAxis(turningPower, Rigidbody.transform.up);
+        Vector3 fwd = turnAngle * Rigidbody.transform.forward;
+
+        Vector3 movement = fwd * accelInput * finalAcceleration;
+
+        // simple suspension allows us to thrust forward even when on bumpy terrain
+        fwd.y = Mathf.Lerp(fwd.y, 0, finalStats.Suspension);
+
+        // forward movement
+        float currentSpeed = Rigidbody.velocity.magnitude;
+        bool wasOverMaxSpeed = currentSpeed >= maxSpeed;
+
+
+        // if over max speed, cannot accelerate faster.
+        if (wasOverMaxSpeed && !isBraking) movement *= 0;
+
+
+        Vector3 adjustedVelocity = Rigidbody.velocity + movement * Time.deltaTime;
+
+        adjustedVelocity.y = Rigidbody.velocity.y;
+
+        //  clamp max speed if we are on ground
+        if (wheelsOnGround)
+        {
+            if (adjustedVelocity.magnitude > maxSpeed && !wasOverMaxSpeed)
             {
-                m_rigidbody.AddForce(((inputAccel * SPEED) * transform.forward) * weight);
+                adjustedVelocity = Vector3.ClampMagnitude(adjustedVelocity, maxSpeed);
             }
+        }
 
-            SlideSpeed = Vector3.Dot(transform.right, m_rigidbody.velocity);
+        // coasting is when we aren't touching accelerate
+        bool isCoasting = Mathf.Abs(accelInput) < .01f;
 
-            currentGrip = Mathf.Lerp(MAX_GRIP, Grip, CurrentSpeed * .05f);
-            // Apply Grip
-            m_rigidbody.AddForce(transform.right * (-SlideSpeed * weight * currentGrip));
+        if (isCoasting)
+        {
+            Vector3 restVelocity = new Vector3(0, Rigidbody.velocity.y, 0);
+            adjustedVelocity = Vector3.MoveTowards(adjustedVelocity, restVelocity, Time.deltaTime * finalStats.CoastingDrag);
+        }
+
+        if (!float.IsNaN(adjustedVelocity.x) && !float.IsNaN(adjustedVelocity.y) && !float.IsNaN(adjustedVelocity.z))
+        {
+            Rigidbody.velocity = adjustedVelocity;
+        }
+
+        ApplyAngularSuspension();
+
+        if (wheelsOnGround)
+        {
+            // manual angular velocity coefficient
+            float angularVelocitySteering = .4f;
+            float angularVelocitySmoothSpeed = 20f;
+
+            // turning is reversed if we're going in reverse and pressing reverse
+            if (!localVelDirectionIsFwd && !accelDirectionIsFwd) angularVelocitySteering *= -1;
+            var angularVel = Rigidbody.angularVelocity;
+
+            // move the Y angular velocity towards our target
+            angularVel.y = Mathf.MoveTowards(angularVel.y, turningPower * angularVelocitySteering, Time.deltaTime * angularVelocitySmoothSpeed);
+
+            // apply the angular velocity
+            Rigidbody.angularVelocity = angularVel;
+
+            // rotate rigidbody's velocity as well to generate immediate velocity redirection
+            // manual velocity steering coefficient
+            float velocitySteering = 25f;
+            // rotate our velocity based on current steer value
+            Rigidbody.velocity = Quaternion.Euler(0f, turningPower * velocitySteering * Time.deltaTime, 0f) * Rigidbody.velocity;
+        }
+
+        // apply simplified lateral ground friction
+        // only apply if we are on the ground at all
+        if (wheelsOnGround)
+        {
+            // manual grip coefficient scalar
+            float gripCoeff = 30f;
+            // what direction is our lateral friction in?
+            // it is the direction the wheels are turned, our forward
+            Vector3 latFrictionDirection = Vector3.Cross(fwd, transform.up);
+            // how fast are we currently moving in our friction direction?
+            float latSpeed = Vector3.Dot(Rigidbody.velocity, latFrictionDirection);
+            // apply the damping
+            Vector3 latFrictionDampedVelocity = Rigidbody.velocity - latFrictionDirection * latSpeed * finalStats.Grip * gripCoeff * Time.deltaTime;
+
+            // apply the damped velocity
+            Rigidbody.velocity = latFrictionDampedVelocity;
+        }
+    }
+
+    void ApplyAngularSuspension()
+    {
+        // simple suspension dampens x and z angular velocity while on the ground
+        Vector3 suspendedX = transform.right;
+        Vector3 suspendedZ = transform.forward;
+        suspendedX.y *= 0f;
+        suspendedZ.y *= 0f;
+        var sX = Vector3.Dot(Rigidbody.angularVelocity, suspendedX) * suspendedX;
+        var sZ = Vector3.Dot(Rigidbody.angularVelocity, suspendedZ) * suspendedZ;
+        var sXZ = sX + sZ;
+        var sCoeff = 10f;
+
+        Vector3 suspensionRotation;
+        float minimumSuspension = 0.5f;
+        if (wheelsOnGround || finalStats.Suspension < minimumSuspension)
+        {
+            suspensionRotation = sXZ * finalStats.Suspension * sCoeff * Time.deltaTime;
         }
         else
         {
-            // Apply Downward Force to prevent floatiness while not on the ground
-            m_rigidbody.AddForce((-Vector3.up * weight) * 2.5f);
+            suspensionRotation = sXZ * minimumSuspension * sCoeff * Time.deltaTime;
+        }
+
+        Vector3 suspendedAngular = Rigidbody.angularVelocity - suspensionRotation;
+
+        // apply the adjusted angularvelocity
+        Rigidbody.angularVelocity = suspendedAngular;
+    }
+
+    void GroundVehicle()
+    {
+        if (IsWheelsOnGround)
+        {
+            if (groundedHeight < MinHeightThreshold)
+            {
+                float diff = MinHeightThreshold - groundedHeight;
+                transform.position += diff * transform.up;
+            }
+        }
+    }
+
+    void GroundAirbourne()
+    {
+        // while in the air, fall faster
+        if (!wheelsOnGround)
+        {
+            Rigidbody.velocity += Physics.gravity * Time.deltaTime * finalStats.AddedGravity;
         }
     }
 
@@ -80,45 +296,6 @@ public abstract class Vehicle : MonoBehaviour
         {
             m_rigidbody.drag = DEF_DRAG;
             m_rigidbody.angularDrag = DEF_ANGULAR_DRAG;
-        }
-    }
-
-    protected void Turn(float turn, bool ignoreWheels)
-    {
-        if ((wheelsOnGround && CurrentSpeed >= SPEED_THRESHOLD_TO_TURN) || ignoreWheels)
-        {
-            float torque = turn;
-            if (torque > 0)
-            {
-                torque = Mathf.Lerp(MIN_TURN_RADIUS_INPUT, MAX_TURN_RADIUS_INPUT, turn);
-            }
-            else if (torque < 0)
-            {
-                torque = Mathf.Lerp(-MIN_TURN_RADIUS_INPUT, -MAX_TURN_RADIUS_INPUT, -turn);
-            }
-
-            Vector3 currTorque = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
-
-            // Corrective turning
-            if ((Mathf.Round(currTorque.y) > 0 && turn <= 0) ||
-                (Mathf.Round(currTorque.y) < 0 && turn >= 0))
-            {
-                Brake(true);
-                // Apply negative force against correct torque to straighten out car faster
-                m_rigidbody.AddTorque(((currTorque.y * transform.up) * MIN_TURN_RADIUS_INPUT * CORRECT_TURN_MOD) * -1);
-            }
-            else
-            {
-                Brake(false);
-            }
-
-            // Additive turning
-            if (Mathf.Round(currTorque.y) == 0 & Mathf.Abs(turn) > 0)
-            {
-                torque *= CORRECT_TURN_MOD;
-            }
-
-            m_rigidbody.AddTorque(torque * transform.up);
         }
     }
 
@@ -156,9 +333,6 @@ public abstract class Vehicle : MonoBehaviour
 
     private void CheckBottomSensor()
     {
-        // Grounded length check
-        float groundCheck = .75f;
-
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 8;
 
@@ -168,14 +342,15 @@ public abstract class Vehicle : MonoBehaviour
 
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(Vector3.down), out hit, groundCheck, layerMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(transform.localPosition, transform.TransformDirection(Vector3.down), out hit, MinHeightThreshold, layerMask, QueryTriggerInteraction.Ignore))
         {
             Debug.DrawRay(transform.localPosition, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
             wheelsOnGround = true;
+            groundedHeight = Mathf.Min(hit.distance, float.MaxValue);
         }
         else
         {
-            Debug.DrawRay(transform.localPosition, transform.TransformDirection(Vector3.down) * groundCheck, Color.white);
+            Debug.DrawRay(transform.localPosition, transform.TransformDirection(Vector3.down) * MinHeightThreshold, Color.white);
             wheelsOnGround = false;
         }
     }
@@ -192,7 +367,7 @@ public abstract class Vehicle : MonoBehaviour
         RaycastHit hit;
 
         // Calculate ray length
-        float length = Collider.size.z * 1.5f;
+        float length = Collider.size.z * 2f;
 
         // Check if vehicle is going forward or backwards
         Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
@@ -207,7 +382,7 @@ public abstract class Vehicle : MonoBehaviour
                 colAngle <= MAX_SLOPE_ANGLE)
             {
                 // Only allign with normals from hit if the normal is under the max slope angle
-                SetSmoothRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
+                transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
             }
         }
         else
@@ -218,7 +393,7 @@ public abstract class Vehicle : MonoBehaviour
 
     private void SetSmoothRotation(Quaternion targetRotation)
     {
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Mathf.Min(SMOOTH_ROT_SPEED, (Time.deltaTime * SMOOTH_ROT_SPEED) * CurrentSpeed));
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Mathf.Min(SMOOTH_ROT_SPEED, (Time.deltaTime * SMOOTH_ROT_SPEED)));
     }
 
     protected float Weight
@@ -251,4 +426,7 @@ public abstract class Vehicle : MonoBehaviour
     {
         get { return wheelsOnGround; }
     }
+
+    public float AirPercent { get; private set; }
+    public float GroundPercent { get; private set; }
 }
