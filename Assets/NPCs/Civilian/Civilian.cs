@@ -3,10 +3,9 @@
 [RequireComponent(typeof(Rigidbody))]
 public class Civilian : Vehicle
 {
-    private float speed = .475f;
-    private float origSpeed = .5f;
+    private float speed = 0f;
 
-    private const float TURN_SMOOTH_SPEED = 1f;
+    private const float TURN_SMOOTH_SPEED = 2f;
 
     private const float DEF_DIST_TO_STOP = 2.5f;
     private float distToStop = DEF_DIST_TO_STOP;
@@ -18,14 +17,12 @@ public class Civilian : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
-    private CivilianState aiState = CivilianState.NORMAL;
+    public CivilianState aiState = CivilianState.NORMAL;
     private const float FRENZIED_STATE_MOD = 2f;
     private const float FRENZIED_STATE_TURN_MOD = 10;
 
     void Awake()
     {
-        origSpeed = speed;
-
         Rigidbody = GetComponent<Rigidbody>();
         Collider = GetComponentInChildren<BoxCollider>();
 
@@ -34,6 +31,21 @@ public class Civilian : Vehicle
         sensor.rayLength = SENSOR_LENGTH;
 
         Weight = 200;
+
+        baseStats = new Vehicle.Stats
+        {
+            TopSpeed = 10f,
+            Acceleration = 5f,
+            AccelerationCurve = 5f,
+            Braking = 10f,
+            ReverseAcceleration = 5f,
+            ReverseSpeed = 5f,
+            Steer = 10f,
+            CoastingDrag = 8f,
+            Grip = 1f,
+            AddedGravity = 1f,
+            Suspension = .2f
+        };
     }
 
     void Start()
@@ -50,30 +62,14 @@ public class Civilian : Vehicle
 
         if (aiState.Equals(CivilianState.HALTED))
         {
+            Brake(true);
             return;
         }
 
         if (sensor.Contact != null && aiState.Equals(CivilianState.NORMAL))
         {
+            Brake(true);
             return;
-        }
-
-        if (aiState.Equals(CivilianState.FRENZIED))
-        {
-            speed = origSpeed * FRENZIED_STATE_MOD;
-            distToStop = DEF_DIST_TO_STOP * FRENZIED_STATE_MOD;
-
-            if (sensor.Contact != null)
-            {
-                // Turn to get out of things way while frenzied
-                Quaternion currentRotation = transform.rotation;
-
-                float turnAxis = currentRotation.y;
-                turnAxis += FRENZIED_STATE_TURN_MOD;
-
-                Quaternion targetRotation = new Quaternion(currentRotation.x, turnAxis, currentRotation.z, currentRotation.w);
-                transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
-            }
         }
 
         if (Path != null && Path.Waypoints != null)
@@ -120,13 +116,24 @@ public class Civilian : Vehicle
 
     private void MoveToDestination()
     {
-        if (Vector3.Distance(transform.position, Destination.Position) > distToStop)
+        if (Vector3.Distance(transform.position, Destination.Position) > distToStop && !IsDisabled)
         {
             Quaternion targetRotation = Quaternion.LookRotation(Destination.Position - transform.position);
             // Smoothly rotate towards the target point.
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TURN_SMOOTH_SPEED * Time.deltaTime);
+            speed = aiState.Equals(CivilianState.FRENZIED) ? 1 : .2f;
+            if (sensor.Contact != null && aiState.Equals(CivilianState.FRENZIED))
+            {
+                // Turn to get out of things way while frenzied
+                Quaternion currentRotation = transform.rotation;
 
-            Move(speed, 0);
+                float turnAxis = currentRotation.y;
+                turnAxis += FRENZIED_STATE_TURN_MOD;
+
+                Quaternion frenzyTargetRot = new Quaternion(currentRotation.x, turnAxis, currentRotation.z, currentRotation.w);
+                transform.rotation = Quaternion.Slerp(currentRotation, frenzyTargetRot, TURN_SMOOTH_SPEED * Time.deltaTime);
+            }
+            Brake(false);
         }
         else
         {
@@ -142,7 +149,11 @@ public class Civilian : Vehicle
                     DecrementDestination();
                 }
             }
+            speed = 0;
+            Brake(true);
         }
+
+        Move(speed, 0);
     }
 
     private void IncrementDestination()

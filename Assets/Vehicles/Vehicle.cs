@@ -76,8 +76,8 @@ public abstract class Vehicle : MonoBehaviour
     private float inputAccel;
 
     private bool wheelsOnGround = false;
-    public float MinHeightThreshold = 0.02f;
-    private float groundedHeight = float.MaxValue;
+    public float MinHeightThreshold = 0.75f;
+    protected float groundedHeight = float.MaxValue;
 
     private const float DEF_DRAG = 1;
     private const float DEF_ANGULAR_DRAG = .05f;
@@ -88,7 +88,7 @@ public abstract class Vehicle : MonoBehaviour
 
     Vehicle.Stats finalStats;
 
-    public Vehicle.Stats baseStats = new Vehicle.Stats
+    protected Vehicle.Stats baseStats = new Vehicle.Stats
     {
         TopSpeed = 12.5f,
         Acceleration = 5f,
@@ -108,14 +108,8 @@ public abstract class Vehicle : MonoBehaviour
     {
         finalStats = baseStats;
         inputAccel = accel;
-        // apply vehicle physics
-        GroundVehicle();
 
-        if (!IsDisabled)
-        {
-            MoveVehicle(accel, turn);
-        }
-        GroundAirbourne();
+         MoveVehicle(accel, turn);
     }
 
     void MoveVehicle(float accelInput, float turnInput)
@@ -135,11 +129,11 @@ public abstract class Vehicle : MonoBehaviour
         float multipliedAccelerationCurve = finalStats.AccelerationCurve * accelerationCurveCoeff;
         float accelRamp = Mathf.Lerp(multipliedAccelerationCurve, 1, accelRampT * accelRampT);
 
-        bool isBraking = accelDirectionIsFwd != localVelDirectionIsFwd;
+        bool braking = accelDirectionIsFwd != localVelDirectionIsFwd || isBraking;
 
         // if we are braking (moving reverse to where we are going)
         // use the braking accleration instead
-        float finalAccelPower = isBraking ? finalStats.Braking : accelPower;
+        float finalAccelPower = braking ? finalStats.Braking : accelPower;
 
         float finalAcceleration = finalAccelPower * accelRamp;
 
@@ -160,7 +154,7 @@ public abstract class Vehicle : MonoBehaviour
 
 
         // if over max speed, cannot accelerate faster.
-        if (wasOverMaxSpeed && !isBraking) movement *= 0;
+        if (wasOverMaxSpeed && !braking) movement *= 0;
 
 
         Vector3 adjustedVelocity = Rigidbody.velocity + movement * Time.deltaTime;
@@ -192,7 +186,7 @@ public abstract class Vehicle : MonoBehaviour
 
         ApplyAngularSuspension();
 
-        if (wheelsOnGround)
+        if (wheelsOnGround && !IsDisabled)
         {
             // manual angular velocity coefficient
             float angularVelocitySteering = .4f;
@@ -217,7 +211,7 @@ public abstract class Vehicle : MonoBehaviour
 
         // apply simplified lateral ground friction
         // only apply if we are on the ground at all
-        if (wheelsOnGround)
+        if (wheelsOnGround && !IsDisabled)
         {
             // manual grip coefficient scalar
             float gripCoeff = 30f;
@@ -307,6 +301,8 @@ public abstract class Vehicle : MonoBehaviour
         {
             AllignToGround();
         }
+        GroundVehicle();
+        GroundAirbourne();
     }
 
     private void AllignToGround()

@@ -32,7 +32,7 @@ namespace CivilianManager
                 // Wait for Path to render, if needed
                 yield return new WaitUntil(() => path.Waypoints != null);
                 // Calculate the amount of civilians spawned
-                int amountToSpawn = (path.Waypoints.Length * (int)rate);
+                int amountToSpawn = 1; // (path.Waypoints.Length * (int)rate);
                 CivilianSpawn[] spawns = GenerateSpawns(path, amountToSpawn);
 
                 // Spawn civilians on spawn points

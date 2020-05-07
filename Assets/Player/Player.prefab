@@ -63,11 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f4a1ddf0e1cdb4b8f5d107e252237d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentSpeed: 0
-  Grip: 70
-  SlideSpeed: 0
+  MinHeightThreshold: 0.5
+  IsDisabled: 0
   input: {fileID: 0}
   gadgets: {fileID: 0}
+  PlayerTrailPath: {fileID: 0}
 --- !u!114 &7434837461031989527
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ public class MoneyTruck : Vehicle
 {
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1f;
-    private const float TURN_SPEED = .35f;
+    private const float TURN_SPEED = .5f;
     // Multiplicative value used on calculating the turn rotation, allows for the money truck to make tighter turns at higher speeds
     private const float ROT_TORQUE_MOD = 2.25f;
 
@@ -28,8 +28,8 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
-    private const float COLLISION_FORCE_BASE = 2000f;
-    private const float COLLISION_FORCE_Y = 1000f;
+    private const float COLLISION_FORCE_BASE = 3000f;
+    private const float COLLISION_FORCE_Y = 1500f;
 
     private const string MONEY_TRAIL_GAME_OBJ = "Money Trail";
     private const float MONEY_SPAWN_INTERVAL = .25f;
@@ -48,6 +48,21 @@ public class MoneyTruck : Vehicle
         sensor.Vehicle = this;
         sensor.rayLength = SENSOR_LENGTH;
 
+        baseStats = new Vehicle.Stats
+        {
+            TopSpeed = 12f,
+            Acceleration = 5f,
+            AccelerationCurve = 5f,
+            Braking = 10f,
+            ReverseAcceleration = 5f,
+            ReverseSpeed = 5f,
+            Steer = 10f,
+            CoastingDrag = 4f,
+            Grip = .95f,
+            AddedGravity = 5f,
+            Suspension = .2f
+        };
+
         Weight = 2000;
     }
 
@@ -62,7 +77,6 @@ public class MoneyTruck : Vehicle
     void FixedUpdate()
     {
         CheckGroundStatus(false);
-
         MoveToDestination();
     }
 
@@ -78,7 +92,7 @@ public class MoneyTruck : Vehicle
             destination = FindClosestWayPoint();
         }
 
-        if (destination != null)
+        if (destination != null && !IsDisabled)
         {
             if (Vector3.Distance(transform.position, destination.Position) < DIST_TO_DESTINATION)
             {
@@ -96,8 +110,13 @@ public class MoneyTruck : Vehicle
             Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime * ROT_TORQUE_MOD);
             Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
 
-            Move(speed, 0);
         }
+        else
+        {
+            speed = 0;
+            Brake(true);
+        }
+        Move(speed, 0);
     }
 
     // Goal is to find the closest waypoint also in our facing direction

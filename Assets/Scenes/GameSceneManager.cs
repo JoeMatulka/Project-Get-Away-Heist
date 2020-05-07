@@ -1,7 +1,5 @@
 ﻿using CivilianManager;
-using Heist;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameSceneManager : Singleton<GameSceneManager>

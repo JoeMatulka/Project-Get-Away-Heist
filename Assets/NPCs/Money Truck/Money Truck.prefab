@@ -139,7 +139,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &6343985134364506030
 MonoBehaviour:
@@ -153,10 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7287f8afa344a4ca16243b3ab559d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentSpeed: 0
-  Grip: 70
-  SlideSpeed: 0
+  MinHeightThreshold: 0.5
+  IsDisabled: 0
   Path: {fileID: 0}
   destination: {fileID: 0}
   SpawnedMoneyObj: {fileID: 2475871773960752518, guid: 4aa4aea7f9080be4f895f2507e616e1a,
     type: 3}
+  amountOfMoneyLeft: 600000000
