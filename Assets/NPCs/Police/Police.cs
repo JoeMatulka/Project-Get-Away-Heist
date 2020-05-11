@@ -4,13 +4,11 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Police : Vehicle
 {
-    public bool Disable = false;
-
     private Player player;
 
     private float speed = STRAIGHT_SPEED;
     private const float STRAIGHT_SPEED = 1;
-    private const float TURN_SPEED = .75f;
+    private const float TURN_SPEED = .5f;
     private const float TURN_SLOWDOWN_THRESHOLD = 35f;
 
     public PathWayPoint currentWaypoint;
@@ -47,7 +45,7 @@ public class Police : Vehicle
     {
         CheckGroundStatus(false);
         CheckSensors();
-        if (player != null && !Disable)
+        if (player != null && !IsDisabled)
         {
             if (currentWaypoint == null &&
                 !pursuePlayerDirectly)
@@ -66,6 +64,7 @@ public class Police : Vehicle
                 }
             }
         }
+        Move(speed, 0);
     }
 
     void OnCollisionStay(Collision collisionInfo)
@@ -138,7 +137,7 @@ public class Police : Vehicle
         // Slow down for turns
         speed = Mathf.Abs(angle) > TURN_SLOWDOWN_THRESHOLD ? TURN_SPEED : STRAIGHT_SPEED;
 
-        if (sensor.Contact != null && !sensor.Contact.transform.tag.Equals(Player.PLAYER_OBJ_NAME))
+        if (sensor.Contact != null && !sensor.Contact.transform.name.Equals(Player.PLAYER_OBJ_NAME))
         {
             float xPosOfContact = sensor.Contact.transform.position.x;
             angle += xPosOfContact > transform.localPosition.x ? -CONTACT_TURN_MOD : CONTACT_TURN_MOD;
@@ -147,13 +146,11 @@ public class Police : Vehicle
         Vector3 eulerAngleVelocity = new Vector3(0, angle, 0);
         Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.deltaTime);
         Rigidbody.MoveRotation(Rigidbody.rotation * deltaRotation);
-
-        Move(speed, 0);
     }
 
     private IEnumerator Reverse()
     {
-        Move(-STRAIGHT_SPEED, 0);
+        speed = -STRAIGHT_SPEED;
         // Back up until sensors are clear
         yield return new WaitUntil(() => Vector3.Distance(reverseFromTarget, transform.localPosition) > DIST_TO_REVERSE);
         needsToReverse = false;

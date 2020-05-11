@@ -95,7 +95,7 @@ public abstract class Vehicle : MonoBehaviour
         AccelerationCurve = 5f,
         Braking = 10f,
         ReverseAcceleration = 5f,
-        ReverseSpeed = 5f,
+        ReverseSpeed = 10f,
         Steer = 10f,
         CoastingDrag = 4f,
         Grip = .95f,
@@ -366,7 +366,7 @@ public abstract class Vehicle : MonoBehaviour
         float length = Collider.size.z * 2f;
 
         // Check if vehicle is going forward or backwards
-        Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(25, 0, 0) * Vector3.forward : Quaternion.Euler(-25, 0, 0) * -Vector3.forward;
+        Vector3 rayDirection = inputAccel > 0 ? Quaternion.Euler(35, 0, 0) * Vector3.forward : Quaternion.Euler(-35, 0, 0) * -Vector3.forward;
 
         if (Physics.Raycast(transform.localPosition, transform.TransformDirection(rayDirection), out hit, length, layerMask, QueryTriggerInteraction.Ignore))
         {

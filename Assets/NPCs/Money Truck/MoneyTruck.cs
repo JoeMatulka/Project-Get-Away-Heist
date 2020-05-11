@@ -28,8 +28,8 @@ public class MoneyTruck : Vehicle
     private NPCSensor sensor;
     private const float SENSOR_LENGTH = 2.5f;
 
-    private const float COLLISION_FORCE_BASE = 3000f;
-    private const float COLLISION_FORCE_Y = 1500f;
+    private const float COLLISION_FORCE_BASE = 400f;
+    private const float COLLISION_FORCE_Y = 200f;
 
     private const string MONEY_TRAIL_GAME_OBJ = "Money Trail";
     private const float MONEY_SPAWN_INTERVAL = .25f;
@@ -50,7 +50,7 @@ public class MoneyTruck : Vehicle
 
         baseStats = new Vehicle.Stats
         {
-            TopSpeed = 12f,
+            TopSpeed = 11f,
             Acceleration = 5f,
             AccelerationCurve = 5f,
             Braking = 10f,
