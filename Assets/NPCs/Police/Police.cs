@@ -137,7 +137,7 @@ public class Police : Vehicle
         // Slow down for turns
         speed = Mathf.Abs(angle) > TURN_SLOWDOWN_THRESHOLD ? TURN_SPEED : STRAIGHT_SPEED;
 
-        if (sensor.Contact != null && !sensor.Contact.transform.name.Equals(Player.PLAYER_OBJ_NAME))
+        if (sensor.Contact != null && !sensor.Contact.tag.Equals(Player.PLAYER_OBJ_NAME))
         {
             float xPosOfContact = sensor.Contact.transform.position.x;
             angle += xPosOfContact > transform.localPosition.x ? -CONTACT_TURN_MOD : CONTACT_TURN_MOD;

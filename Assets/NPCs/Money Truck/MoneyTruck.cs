@@ -25,9 +25,6 @@ public class MoneyTruck : Vehicle
     private const float POTENTIAL_DEST_INCREMENT = .05f;
     private float nextPotentialWaypointDot = DEF_POTENTIAL_DEST_DOT;
 
-    private NPCSensor sensor;
-    private const float SENSOR_LENGTH = 2.5f;
-
     private const float COLLISION_FORCE_BASE = 400f;
     private const float COLLISION_FORCE_Y = 200f;
 
@@ -43,10 +40,6 @@ public class MoneyTruck : Vehicle
     {
         Rigidbody = GetComponent<Rigidbody>();
         Collider = GetComponentInChildren<BoxCollider>();
-
-        sensor = gameObject.AddComponent<NPCSensor>();
-        sensor.Vehicle = this;
-        sensor.rayLength = SENSOR_LENGTH;
 
         baseStats = new Vehicle.Stats
         {

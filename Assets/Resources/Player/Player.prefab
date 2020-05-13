@@ -154,17 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f4a1ddf0e1cdb4b8f5d107e252237d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentSpeed: 0
-  Grip: 70
-  SlideSpeed: 0
-  IsDisabled: 0
-  Wheels:
-  - {fileID: 7317746003732370350}
-  - {fileID: 1596572718513283514}
-  - {fileID: 8528347021330079414}
-  - {fileID: 8410087566007480117}
-  RaycastDist: 0.3
   MinHeightThreshold: 0.02
+  IsDisabled: 0
   input: {fileID: 0}
   gadgets: {fileID: 0}
   PlayerTrailPath: {fileID: 0}
@@ -206,7 +197,7 @@ GameObject:
   - component: {fileID: 3733633092978091274}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -325,7 +316,7 @@ GameObject:
   - component: {fileID: 3921735193471115531}
   m_Layer: 0
   m_Name: Wheels
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

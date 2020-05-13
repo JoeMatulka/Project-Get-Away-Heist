@@ -6,6 +6,8 @@ public class NPCSensor : MonoBehaviour
 {
     public float rayLength = 5f;
 
+    private int layerMask;
+
     private Vehicle vehicle;
 
     private GameObject sensorContact;
@@ -31,17 +33,13 @@ public class NPCSensor : MonoBehaviour
         Vector3 diagLeft = transform.TransformDirection(new Vector3(-.5f, 0, 1));
         Vector3[] directions = new Vector3[] { forward, diagLeft, diagRight };
         rayDirections = directions;
-        // Bit shift the index of the layer (8) to get a bit mask
-        int layerMask = 1 << 8;
 
-        // This would cast rays only against colliders in layer 8.
-        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-        layerMask = ~layerMask;
+        int layerMask = LayerMask.GetMask("Ignore Raycast");
 
         RaycastHit hit;
 
         foreach (Vector3 direction in directions) {
-            if (Physics.Raycast(position, direction, out hit, rayLength, layerMask))
+            if (Physics.Raycast(position, direction, out hit, rayLength, ~layerMask))
             {
                 Debug.DrawRay(position, direction * hit.distance, Color.red);
                 sensorContact = hit.collider.gameObject;

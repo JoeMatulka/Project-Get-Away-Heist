@@ -38,7 +38,7 @@ public class Player : Vehicle
 
         Collider = GetComponentInChildren<BoxCollider>();
 
-        Weight = 20;
+        Weight = 200;
 
         GameObject playerPath = new GameObject(PLAYER_PATH_NAME);
         PlayerTrailPath = playerPath.AddComponent<Path>();
